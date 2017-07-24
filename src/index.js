@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import path from 'path'
 
 export const topic = {
-  name: 'autocomplete',
+  name: 'ac',
   description: 'manage cli autocompletion',
   hidden: true
 }
