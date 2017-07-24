@@ -7,5 +7,6 @@ export default class extends Command {
   static hidden = true
 
   async run () {
+    this.out.debug('ac present')
   }
 }
