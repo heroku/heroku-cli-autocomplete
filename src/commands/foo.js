@@ -7,25 +7,28 @@ const addonCompletion = {
   // cacheDuration defaults to 1 day
   cacheDuration: 60 * 60, // 1 hour
   // cacheKey defaults to arg or flag name
-  cacheKey: `all_app_addons`,
-  options: async (out: Output) => {
-    const heroku = new Heroku({out: out})
-    let addons = await heroku.get('/addons')
+  // if falsey
+  cacheKey: async (ctx) => {
+    return ctx.args.app ? `${ctx.args.app}_addons` : ''
+  },
+  options: async (ctx) => {
+    const heroku = new Heroku({out: ctx.out})
+    let addons = await heroku.get(`/apps/${ctx.args.app}/addons`)
     return addons.map(a => a.name).sort()
   }
 }
 
 const appCompletion = {
-  options: async (out: Output) => {
-    const heroku = new Heroku({out: out})
+  options: async (ctx) => {
+    const heroku = new Heroku({out: ctx.out})
     let apps = await heroku.get('/apps')
     return apps.map(a => a.name).sort()
   }
 }
 
 const spaceCompletion = {
-  options: async (out: Output) => {
-    const heroku = new Heroku({out: out})
+  options: async (ctx) => {
+    const heroku = new Heroku({out: ctx.out})
     let spaces = await heroku.get('/spaces')
     return spaces.map(s => s.name).sort()
   }
