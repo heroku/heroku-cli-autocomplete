@@ -1,24 +1,25 @@
 // @flow
 
 import type Output from 'cli-engine-command/lib/output'
+import type {Completion} from 'cli-engine-command/lib/completion'
 import {Command, flags, APIClient as Heroku} from 'cli-engine-heroku'
 
-const addonCompletion = {
+const addonCompletion: Completion = {
   // cacheDuration defaults to 1 day
   cacheDuration: 60 * 60, // 1 hour
   // cacheKey defaults to arg or flag name
-  // if falsey
+  // if cacheKey is falsey
   cacheKey: async (ctx) => {
-    return ctx.args.app ? `${ctx.args.app}_addons` : ''
+    return (ctx.args && ctx.args.app) ? `${ctx.args.app}_addons` : ''
   },
   options: async (ctx) => {
     const heroku = new Heroku({out: ctx.out})
-    let addons = await heroku.get(`/apps/${ctx.args.app}/addons`)
+    let addons = (ctx.args && ctx.args.app) ? await heroku.get(`/apps/${ctx.args.app}/addons`) : []
     return addons.map(a => a.name).sort()
   }
 }
 
-const appCompletion = {
+const appCompletion: Completion = {
   options: async (ctx) => {
     const heroku = new Heroku({out: ctx.out})
     let apps = await heroku.get('/apps')
@@ -26,7 +27,8 @@ const appCompletion = {
   }
 }
 
-const spaceCompletion = {
+const spaceCompletion: Completion = {
+  cacheDuration: 60 * 30, // half-hour
   options: async (ctx) => {
     const heroku = new Heroku({out: ctx.out})
     let spaces = await heroku.get('/spaces')
