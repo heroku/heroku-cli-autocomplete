@@ -2,11 +2,12 @@
 
 import klaw from 'klaw-sync'
 
-export const topic = {
-  name: 'ac',
+export const topics = [
+{
+  name: 'autocomplete',
   description: 'manage cli autocompletion',
   hidden: true
-}
+}]
 
 export const commands = klaw(__dirname, {nodir: true})
   .filter(f => f.path.endsWith('.js'))
