@@ -11,6 +11,7 @@ import {convertFromV5} from 'cli-engine/lib/plugins/legacy'
 export default class AutocompleteInit extends Command {
   static topic = 'autocomplete'
   static command = 'init'
+  static hidden = true
 
   compaddArgs: Array<string> = []
   compaddFlags: Array<string> = []
