@@ -83,7 +83,7 @@ export default class ACFoo extends AutocompleteBase {
         const argvFlag = curIsFlagValue ? previousArg : curArg
         let {name, flag} = this._findFlagFromWildArg(argvFlag, Command)
         if (!flag) throw new Error(`6`)
-        cacheKey = flag.name || 'no_name'
+        cacheKey = flag.name || name || 'no_name'
         cacheCompletion = flag.completion
       } else {
         const cmdArgs = Command.args || []
