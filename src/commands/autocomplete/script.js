@@ -1,7 +1,7 @@
 // @flow
 
 import path from 'path'
-import AutocompleteBase from '.'
+import {AutocompleteBase} from '../../autocomplete'
 import AutocompleteInit from './init'
 
 export default class AutocompleteScript extends AutocompleteBase {

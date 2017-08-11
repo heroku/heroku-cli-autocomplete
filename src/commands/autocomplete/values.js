@@ -1,7 +1,7 @@
 // @flow
 
 import {flags} from 'cli-engine-command'
-import AutocompleteBase from '.'
+import {AutocompleteBase} from '../../autocomplete'
 // import ACScripter from '../../autocomplete'
 import Plugins from 'cli-engine/lib/plugins'
 import ACCache from '../../cache'
