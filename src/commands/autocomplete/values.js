@@ -59,7 +59,7 @@ export default class AutocompleteValues extends AutocompleteBase {
         const key = (cacheCompletion.cacheKey || cacheKey)
         const flagCache = path.join(this.completionsPath, key)
         const duration = cacheCompletion.cacheDuration || 60 * 60 * 24 // 1 day
-        const cacheFunc = cacheCompletion.options(this.out)
+        const cacheFunc = cacheCompletion.options({out: this.out})
         const opts = {cacheFn: () => cacheFunc}
         const options = await ACCache.fetch(flagCache, duration, opts)
         this.out.log((options || []).join('\n'))

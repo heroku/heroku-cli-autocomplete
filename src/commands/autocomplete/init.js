@@ -167,7 +167,8 @@ _args=(${argscompletions})
         let cachecompl
         if (f.completion) {
           this._addCompaddFlag(flag)
-          cachecompl = `: :_compadd_flag_${flag}`
+          // cachecompl = `: :_compadd_flag_${flag}`
+          cachecompl = `: :_compadd_cli`
         }
         let completion = `--${name}[${f.parse ? '' : '(bool) '}${f.description}]${cachecompl || ''}`
         return `"${completion}"`
@@ -241,13 +242,21 @@ test -f $HEROKU_BASH_AC_PATH && source $HEROKU_BASH_AC_PATH;
     fs.writeFileSync(path.join(this.completionsCachePath, 'bash_setup'), bashSetup)
   }
 
+  _genCompCli () {
+    return `_compadd_cli () {
+  compadd $(echo $(/Users/philipe.navarro/src/github.com/heroku/cli-engine/bin/run autocomplete:options "\${words}"))
+}
+`
+  }
+
   _writeFunctionsToCache () {
     const completions = []
-      .concat(this.argsSetterFns)
-      .concat(this.flagsSetterFns)
       .concat(this._genAllCmdsListSetter())
-      .concat(this._genCompaddArgs())
-      .concat(this._genCompaddFlags())
+      .concat(this._genCompCli())
+      // .concat(this.argsSetterFns)
+      .concat(this.flagsSetterFns)
+      // .concat(this._genCompaddArgs())
+      // .concat(this._genCompaddFlags())
       .join('\n')
     fs.writeFileSync(path.join(this.completionsCachePath, 'commands_functions'), completions)
   }
