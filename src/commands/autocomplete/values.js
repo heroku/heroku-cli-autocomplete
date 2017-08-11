@@ -2,7 +2,7 @@
 
 import {flags} from 'cli-engine-command'
 import AutocompleteBase from '.'
-import ACScripter from '../../autocomplete'
+// import ACScripter from '../../autocomplete'
 import Plugins from 'cli-engine/lib/plugins'
 import ACCache from '../../cache'
 import path from 'path'
@@ -65,10 +65,11 @@ export default class AutocompleteValues extends AutocompleteBase {
         this.out.log((options || []).join('\n'))
       }
     } catch (err) {
-      const ac = new ACScripter(this)
+      // TODO: fix error logging
+      // const ac = new ACScripter(this)
       // fail silently
       // or autocomplete will use error as options
-      ac.writeLogFile(err.message)
+      // ac.writeLogFile(err.message)
     }
   }
 }

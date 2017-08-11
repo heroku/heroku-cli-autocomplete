@@ -2,7 +2,7 @@
 
 import path from 'path'
 import AutocompleteBase from '.'
-import AutocompleteScripter from '../../autocomplete'
+import AutocompleteInit from './init'
 
 export default class AutocompleteScript extends AutocompleteBase {
   static topic = 'autocomplete'
@@ -14,8 +14,7 @@ export default class AutocompleteScript extends AutocompleteBase {
 
   async run () {
     this.errorIfWindows()
-    const ac = new AutocompleteScripter(this)
-    await ac.createCaches()
+    await AutocompleteInit.run({config: this.config})
 
     const shell = this.argv[0] || this.config.shell
     if (!shell) {
