@@ -1,6 +1,7 @@
 [ignore]
 <PROJECT_ROOT>/lib/.*
 .*/node_modules/nock.*
+.*/node_modules/rwlock.*
 
 [include]
 

@@ -1,18 +1,16 @@
 // @flow
 
 import path from 'path'
-import Output from 'cli-engine-command/lib/output'
 import {logToFile} from 'cli-engine-command/lib/output/stream'
 import moment from 'moment'
 import Command from 'cli-engine-command'
-import {type Config} from 'cli-engine-config'
 import fs from 'fs-extra'
 import Plugins from 'cli-engine/lib/plugins'
 import {convertFromV5} from 'cli-engine/lib/plugins/legacy'
 
 export default class AutocompleteInit extends Command {
-  static topic = "autocomplete"
-  static command = "init"
+  static topic = 'autocomplete'
+  static command = 'init'
 
   compaddArgs: Array<string> = []
   compaddFlags: Array<string> = []
@@ -33,7 +31,7 @@ export default class AutocompleteInit extends Command {
     logToFile(`[${moment().format()}] ${msg}`, this.acLogfile)
   }
 
-  async run() {
+  async run () {
     await this.createCaches()
   }
 
