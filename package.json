@@ -2,6 +2,7 @@
   "name": "heroku-cli-autocomplete",
   "version": "0.1.0",
   "files": [
+    "autocomplete",
     "lib"
   ],
   "keywords": [
