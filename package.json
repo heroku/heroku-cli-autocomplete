@@ -14,7 +14,8 @@
     "clean": "rimraf lib",
     "prepare": "npm run clean && npm run build",
     "test": "jest && flow && eslint .",
-    "release": "np"
+    "release": "np",
+    "watch": "babel --watch src -d lib --ignore '*.test.js'"
   },
   "dependencies": {
     "cli-engine": "^3.5.58",
