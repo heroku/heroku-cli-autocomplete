@@ -1,7 +1,6 @@
 // @flow
 
-import fs from 'fs-extra'
-import path from 'path'
+import klaw from 'klaw-sync'
 
 export const topic = {
   name: 'ac',
@@ -9,8 +8,8 @@ export const topic = {
   hidden: true
 }
 
-let dir = path.join(__dirname, 'commands')
-export const commands = fs.readdirSync(dir)
-  .filter(f => path.extname(f) === '.js' && !f.endsWith('.test.js'))
-  // $FlowFixMe
-  .map(f => require('./commands/' + f).default)
+export const commands = klaw(__dirname, {nodir: true})
+  .filter(f => f.path.endsWith('.js'))
+  .filter(f => !f.path.endsWith('.test.js'))
+  .filter(f => f.path !== __filename)
+  .map(f => require(f.path))

@@ -4,26 +4,22 @@ import path from 'path'
 import Output from 'cli-engine-command/lib/output'
 import {logToFile} from 'cli-engine-command/lib/output/stream'
 import moment from 'moment'
-import type Command from 'cli-engine-command'
+import Command from 'cli-engine-command'
 import {type Config} from 'cli-engine-config'
 import fs from 'fs-extra'
-import Plugins from './plugins'
-import {convertFromV5} from './plugins/legacy'
+import Plugins from 'cli-engine/lib/plugins'
+import {convertFromV5} from 'cli-engine/lib/plugins/legacy'
 
-export default class {
-  out: Output
-  config: Config
+export default class AutocompleteInit extends Command {
+  static topic = "autocomplete"
+  static command = "init"
+
   compaddArgs: Array<string> = []
   compaddFlags: Array<string> = []
   argsSetterFns: Array<string> = []
   flagsSetterFns: Array<string> = []
   cmdsWithDesc: Array<string> = []
   cmdsWithFlags: Array<string> = []
-
-  constructor ({config, out}: {config: Config, out: Output}) {
-    this.config = config
-    this.out = out
-  }
 
   get completionsCachePath (): string {
     return path.join(this.config.cacheDir, 'completions')
@@ -35,6 +31,10 @@ export default class {
 
   writeLogFile (msg: string) {
     logToFile(`[${moment().format()}] ${msg}`, this.acLogfile)
+  }
+
+  async run() {
+    await this.createCaches()
   }
 
   async createCaches () {
@@ -228,14 +228,14 @@ compadd $(echo $(${this.config.bin} autocomplete:values --cmd=$_command_id --res
     const zshSetup = `HEROKU_AC_COMMANDS_PATH=${path.join(this.completionsCachePath, 'commands')};
 HEROKU_ZSH_AC_SETTERS_PATH=\${HEROKU_AC_COMMANDS_PATH}_functions && test -f $HEROKU_ZSH_AC_SETTERS_PATH && source $HEROKU_ZSH_AC_SETTERS_PATH;
 fpath=(
-${path.join(__dirname, '..', 'autocomplete', 'zsh')}
+${path.join(__dirname, '..', '..', '..', 'autocomplete', 'zsh')}
 $fpath
 );
 autoload -Uz compinit;
 compinit;
 `
     const bashSetup = `HEROKU_AC_COMMANDS_PATH=${path.join(this.completionsCachePath, 'commands')};
-HEROKU_BASH_AC_PATH=${path.join(__dirname, '..', 'autocomplete', 'bash', 'heroku.bash')}
+HEROKU_BASH_AC_PATH=${path.join(__dirname, '..', '..', '..', 'autocomplete', 'bash', 'heroku.bash')}
 test -f $HEROKU_BASH_AC_PATH && source $HEROKU_BASH_AC_PATH;
 `
     fs.writeFileSync(path.join(this.completionsCachePath, 'zsh_setup'), zshSetup)

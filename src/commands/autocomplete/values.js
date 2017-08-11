@@ -3,7 +3,7 @@
 import {flags} from 'cli-engine-command'
 import AutocompleteBase from '.'
 import ACScripter from '../../autocomplete'
-import Plugins from '../../plugins'
+import Plugins from 'cli-engine/lib/plugins'
 import ACCache from '../../cache'
 import path from 'path'
 
