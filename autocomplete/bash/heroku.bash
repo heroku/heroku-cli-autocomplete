@@ -179,12 +179,10 @@ __ltrim_colon_completions() {
 fi
 # end vendor scop/bash-completion
 
-# TODO move to cache
 _compreply_cli () {
   opts=("$(heroku autocomplete:options "$(IFS=$' '; echo "${COMP_WORDS[*]}")")")
   COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
 }
-
 
 _heroku()
 {
