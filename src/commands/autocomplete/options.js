@@ -31,9 +31,9 @@ export default class ACFoo extends AutocompleteBase {
       if (!Command) throw new Error(`Command ${cmdId} not found`)
 
       // C -
-      // 1. find what is asking to be completed
-      // 2. set any parsable context from exisitng args or flags
-      // 3. set vars needed to build/retrive cache
+      // 1. find what arg/flag is asking to be completed
+      // 2. set any parsable context from exisitng args/flags
+      // 3. set vars needed to build/retrive options cache
       const cmdArgv = commandLineToComplete.slice(2)
       const cmdArgvCount = cmdArgv.length
       const cmdCurArgv = cmdArgv[cmdArgvCount - 1]
@@ -57,7 +57,7 @@ export default class ACFoo extends AutocompleteBase {
         cacheCompletion = arg.completion
       }
 
-      // build/retrieve & return cache
+      // build/retrieve & return options cache
       if (cacheCompletion && cacheCompletion.options) {
         // use cacheKey function or fallback to arg/flag name
         const ctx = {args: this.parsedArgs, flags: this.parsedFlags, argv: this.argv, out: this.out}
@@ -71,11 +71,11 @@ export default class ACFoo extends AutocompleteBase {
         const opts = {cacheFn: () => cacheFunc}
         const options = await ACCache.fetch(flagCachePath, duration, opts)
 
-        // return cache/options
+        // return options cache
         this.out.log((options || []).join('\n'))
       }
     } catch (err) {
-      // on error, audible 'beep'
+      // on error make audible 'beep'
       process.stderr.write('\x07')
       // write to ac log
       this.writeLogFile(err.message)
