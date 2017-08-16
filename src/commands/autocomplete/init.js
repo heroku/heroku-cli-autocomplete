@@ -7,7 +7,6 @@ import Plugins from 'cli-engine/lib/plugins'
 import {convertFromV5} from 'cli-engine/lib/plugins/legacy'
 import {AutocompleteBase} from '../../autocomplete'
 
-
 export default class AutocompleteInit extends AutocompleteBase {
   static topic = 'autocomplete'
   static command = 'init'
@@ -169,12 +168,12 @@ test -f $HEROKU_BASH_AC_PATH && source $HEROKU_BASH_AC_PATH;
     fs.writeFileSync(path.join(this.completionsCachePath, 'bash_setup'), bashSetup)
   }
 
-//   _genCompCli () {
-//     return `_compadd_cli () {
-//   compadd $(echo $(heroku autocomplete:options "\${words}"))
-// }
-// `
-//   }
+  //   _genCompCli () {
+  //     return `_compadd_cli () {
+  //   compadd $(echo $(heroku autocomplete:options "\${words}"))
+  // }
+  // `
+  //   }
 
   _writeZshSetterFunctionsToCache () {
     const completions = []
