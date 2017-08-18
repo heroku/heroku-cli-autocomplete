@@ -113,7 +113,8 @@ export default class AutocompleteInit extends AutocompleteBase {
         if (f.completion) {
           cachecompl = `: :_compadd_cli`
         }
-        let completion = `--${name}[${f.options ? '(options)' : '(bool) '}${f.description}]${cachecompl || ''}`
+        let help =  f.parse ? (f.options ? '(options) ' : '') : '(bool) '
+        let completion = `--${name}[${help}${f.description}]${cachecompl || ''}`
         return `"${completion}"`
       })
       .join('\n')
