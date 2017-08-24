@@ -152,7 +152,9 @@ ${this.cmdsWithDesc.join('\n')}
   }
 
   _writeShellSetupsToCache () {
-    const zshSetup = `HEROKU_AC_COMMANDS_PATH=${path.join(this.completionsCachePath, 'commands')};
+    const zshSetup = `${this.waitingDots}
+
+HEROKU_AC_COMMANDS_PATH=${path.join(this.completionsCachePath, 'commands')};
 HEROKU_ZSH_AC_SETTERS_PATH=\${HEROKU_AC_COMMANDS_PATH}_functions && test -f $HEROKU_ZSH_AC_SETTERS_PATH && source $HEROKU_ZSH_AC_SETTERS_PATH;
 fpath=(
 ${path.join(__dirname, '..', '..', '..', 'autocomplete', 'zsh')}
@@ -194,7 +196,6 @@ bindkey "^I" expand-or-complete-with-dots`
       .concat(this._genAllCmdsListSetter())
       // .concat(this._genCompCli())
       .concat(this.flagsSetterFns)
-      .concat(this.waitingDots)
       .join('\n')
     fs.writeFileSync(path.join(this.completionsCachePath, 'commands_functions'), completions)
   }
