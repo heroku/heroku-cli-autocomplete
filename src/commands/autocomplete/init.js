@@ -176,11 +176,23 @@ test -f $HEROKU_BASH_AC_PATH && source $HEROKU_BASH_AC_PATH;
   // `
   //   }
 
+  get waitingDots () : string {
+    return `# http://stackoverflow.com/a/844299
+expand-or-complete-with-dots() {
+  echo -n "\e[38;5;104m...\e[0m"
+  zle expand-or-complete
+  zle redisplay
+}
+zle -N expand-or-complete-with-dots
+bindkey "^I" expand-or-complete-with-dots`
+  }
+
   _writeZshSetterFunctionsToCache () {
     const completions = []
       .concat(this._genAllCmdsListSetter())
       // .concat(this._genCompCli())
       .concat(this.flagsSetterFns)
+      .concat(this.waitingDots)
       .join('\n')
     fs.writeFileSync(path.join(this.completionsCachePath, 'commands_functions'), completions)
   }
