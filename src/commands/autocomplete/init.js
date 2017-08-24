@@ -176,7 +176,8 @@ test -f $HEROKU_BASH_AC_PATH && source $HEROKU_BASH_AC_PATH;
   // `
   //   }
 
-  get waitingDots () : string {
+  get waitingDots (): string {
+    /*eslint-disable */
     return `# http://stackoverflow.com/a/844299
 expand-or-complete-with-dots() {
   echo -n "\e[38;5;104m...\e[0m"
@@ -185,6 +186,7 @@ expand-or-complete-with-dots() {
 }
 zle -N expand-or-complete-with-dots
 bindkey "^I" expand-or-complete-with-dots`
+  /*eslint-enable */
   }
 
   _writeZshSetterFunctionsToCache () {
