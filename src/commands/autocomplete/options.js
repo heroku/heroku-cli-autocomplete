@@ -18,7 +18,6 @@ export default class ACFoo extends AutocompleteBase {
   parsedFlags: {[name: string]: ?string} = {}
 
   async run () {
-    process.stderr.write('.')
     // ex: heroku autocomplete:options 'heroku addons:destroy -a myapp myaddon'
     try {
       // A - grab cmd line to complete from argv
@@ -31,7 +30,6 @@ export default class ACFoo extends AutocompleteBase {
       let Command = await plugins.findCommand(cmdId)
       if (!Command) throw new Error(`Command ${cmdId} not found`)
 
-      process.stderr.write('.')
       // C -
       // 1. find what arg/flag is asking to be completed
       // 2. set any parsable context from exisitng args/flags
@@ -44,7 +42,6 @@ export default class ACFoo extends AutocompleteBase {
       let cacheKey
       let cacheCompletion
 
-      process.stderr.write('.')
       if (cmdCurArgvIsFlag || cmdCurArgvIsFlagValue) {
         const argvFlag = cmdCurArgvIsFlagValue ? cmdPreviousArgv : cmdCurArgv
         let {name, flag} = this._findFlagFromWildArg(argvFlag, Command)
@@ -76,20 +73,13 @@ export default class ACFoo extends AutocompleteBase {
 
         // return options cache
         this.out.log((options || []).join('\n'))
-        this._clearStderr()
       }
     } catch (err) {
-      // on error send audible bell
+      // on error make audible 'beep'
       process.stderr.write('\x07')
-      this._clearStderr()
       // write to ac log
       this.writeLogFile(err.message)
     }
-  }
-
-  _clearStderr () {
-    const ansiEscapes = require('ansi-escapes')
-    process.stderr.write(ansiEscapes.cursorBackward(3) + ansiEscapes.eraseDown)
   }
 
   _findFlagFromWildArg (wild: string, Command: Class<Command<*>>) {
