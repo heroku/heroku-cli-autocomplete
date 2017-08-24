@@ -34,6 +34,6 @@ export default class AutocompleteScript extends AutocompleteBase {
   }
 
   get _prefix (): string {
-    return '\n# heroku autocomplete setup\n'
+    return '\\n# heroku autocomplete setup\\n'
   }
 }

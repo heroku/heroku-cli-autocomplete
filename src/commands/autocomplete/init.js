@@ -182,7 +182,7 @@ test -f $HEROKU_BASH_AC_PATH && source $HEROKU_BASH_AC_PATH;
     /*eslint-disable */
     return `# http://stackoverflow.com/a/844299
 expand-or-complete-with-dots() {
-  echo -n "\e[38;5;104m...\e[0m"
+  echo -n \"\\e[38;5;104m...\\e[0m\"
   zle expand-or-complete
   zle redisplay
 }
