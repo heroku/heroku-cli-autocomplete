@@ -6,7 +6,7 @@ import path from 'path'
 import ACCache from '../../cache'
 import AutocompleteBase from '.'
 
-export default class ACFoo extends AutocompleteBase {
+export default class AutocompleteOptions extends AutocompleteBase {
   static topic = 'autocomplete'
   static command = 'options'
   static description = 'dynamic completion'
