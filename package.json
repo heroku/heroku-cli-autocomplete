@@ -19,10 +19,12 @@
     "watch": "babel --watch src -d lib --ignore '*.test.js'"
   },
   "dependencies": {
-    "cli-engine": "^4.1.2",
-    "cli-engine-command": "^6.0.2",
-    "cli-engine-config": "^1.6.3",
-    "cli-engine-heroku": "^1.1.12",
+    "cli-engine": "^4.6.17",
+    "cli-engine-command": "^9.0.2",
+    "cli-engine-config": "^3.4.0",
+    "cli-engine-heroku": "^5.0.0",
+    "cli-ux": "^2.0.3",
+    "debug": "^3.1.0",
     "klaw-sync": "^3.0.0"
   },
   "devDependencies": {
