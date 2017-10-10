@@ -5,7 +5,7 @@ import path from 'path'
 import moment from 'moment'
 import cli from 'cli-ux'
 
-export class AutocompleteBase extends Command {
+export class AutocompleteBase extends Command<*> {
   get functionsPath (): string {
     return path.join(__dirname, '..', '..', '..', 'autocomplete')
   }

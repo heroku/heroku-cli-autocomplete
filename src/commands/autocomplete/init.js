@@ -6,7 +6,6 @@ import fs from 'fs-extra'
 import Plugins from 'cli-engine/lib/plugins'
 import {convertFromV5} from 'cli-engine/lib/plugins/legacy'
 import {AutocompleteBase} from '../../autocomplete'
-import cli from 'cli-ux'
 
 const debug = require('debug')('heroku:autocomplete')
 
