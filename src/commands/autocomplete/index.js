@@ -2,6 +2,8 @@
 
 import {AutocompleteBase} from '../../autocomplete'
 import cli from 'cli-ux'
+import {flags} from 'cli-engine-heroku'
+import AutocompleteInit from './init'
 
 export default class Autocomplete extends AutocompleteBase {
   static topic = 'autocomplete'
@@ -9,6 +11,9 @@ export default class Autocomplete extends AutocompleteBase {
   // hide until beta release
   static hidden = true
   static args = [{name: 'shell', description: 'shell type', required: false}]
+  static flags = {
+    'skip-instructions': flags.boolean({description: 'Do not show installation instructions', char: 's'})
+  }
 
   async run () {
     this.errorIfWindows()
@@ -18,16 +23,17 @@ export default class Autocomplete extends AutocompleteBase {
       cli.error('Error: Missing required argument shell')
     }
 
-    switch (shell) {
-      // for now, suspending bash completion
-      //       case 'bash':
-      //         const cmd = CustomColors.cmd(`$ printf $(heroku autocomplete:script bash) >> ~/.bashrc`)
-      //         this.out.log(`Add the autocomplete setup script to your .bashrc or .bash_profile via:
-      //
-      // ${cmd}`)
-      //         break
-      case 'zsh':
-        cli.log(`${cli.color.bold('Setup Instructions for Heroku CLI Autocomplete ---')}
+    if (!this.flags['skip-instructions']) {
+      switch (shell) {
+        // for now, suspending bash completion
+        //       case 'bash':
+        //         const cmd = CustomColors.cmd(`$ printf $(heroku autocomplete:script bash) >> ~/.bashrc`)
+        //         this.out.log(`Add the autocomplete setup script to your .bashrc or .bash_profile via:
+        //
+        // ${cmd}`)
+        //         break
+        case 'zsh':
+          cli.log(`${cli.color.bold('Setup Instructions for Heroku CLI Autocomplete ---')}
 
 1) Add the autocomplete env vars to your zsh profile
 
@@ -53,14 +59,21 @@ ${cli.color.cyan('$ heroku apps:info --<TAB>')}
 
 ${cli.color.cyan('$ heroku apps:info --app=<TAB>')}
 `)
-        break
-      default:
-        cli.error(`Currently ${shell} is not a supported shell for autocomplete`)
-    }
-    cli.log(`\n${cli.color.bold('To uninstall Heroku CLI Autocomplete:')}
+          break
+        default:
+          cli.error(`Currently ${shell} is not a supported shell for autocomplete`)
+      }
+
+      cli.log(`\n${cli.color.bold('To uninstall Heroku CLI Autocomplete:')}
 -- Uninstall this plugin from your CLI (for help see: ${cli.color.cyan('heroku help plugins:uninstall')})
 -- Delete the env vars from your zsh profile & restart your terminal
 `)
+    }
+
+    cli.action.start(`${cli.color.bold('Building autocomplete cache')}`)
+    await AutocompleteInit.run(Object.assign(this.config, {argv: []}))
+    cli.action.stop()
+
     cli.log('\nEnjoy!')
   }
 }

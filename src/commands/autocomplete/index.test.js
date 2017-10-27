@@ -44,3 +44,10 @@ To uninstall Heroku CLI Autocomplete:
 
 Enjoy!`)
 })
+
+skipWindows('skips instructions', async () => {
+  cli.config.mock = true
+  await Autocomplete.mock('zsh', '--skip-instructions')
+  expect(cli.stdout.output).toMatch(`
+Enjoy!`)
+})
