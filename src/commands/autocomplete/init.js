@@ -6,6 +6,7 @@ import fs from 'fs-extra'
 import Plugins from 'cli-engine/lib/plugins'
 import {convertFromV5} from '../../legacy'
 import {AutocompleteBase} from '../../autocomplete'
+import {flags} from 'cli-engine-heroku'
 
 const debug = require('debug')('heroku:autocomplete')
 
@@ -13,6 +14,9 @@ export default class AutocompleteInit extends AutocompleteBase {
   static topic = 'autocomplete'
   static command = 'init'
   static hidden = true
+  static flags = {
+    'skip-ellipsis': flags.boolean({description: 'Do not add an ellipsis to zsh autocomplete setup', char: 'e'})
+  }
 
   flagsSetterFns: Array<string> = []
   cmdsWithDesc: Array<string> = []
@@ -154,7 +158,7 @@ ${this.cmdsWithDesc.join('\n')}
   }
 
   _writeShellSetupsToCache () {
-    const zshSetup = `${this.waitingDots}
+    const zshSetup = `${this.flags['skip-ellipsis'] ? '' : this.waitingDots}
 
 HEROKU_AC_ANALYTICS_DIR=${path.join(this.completionsCachePath, 'completion_analytics')};
 HEROKU_AC_COMMANDS_PATH=${path.join(this.completionsCachePath, 'commands')};
@@ -186,7 +190,7 @@ compinit;
   get waitingDots (): string {
     return `# http://stackoverflow.com/a/844299
 expand-or-complete-with-dots() {
-  echo -n "\\e[38;5;104m...\\e[0m"
+  echo -n "..."
   zle expand-or-complete
   zle redisplay
 }
