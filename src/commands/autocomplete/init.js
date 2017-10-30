@@ -158,10 +158,11 @@ ${this.cmdsWithDesc.join('\n')}
   }
 
   _writeShellSetupsToCache () {
+    const envAnalyticsDir = `HEROKU_AC_ANALYTICS_DIR=${path.join(this.completionsCachePath, 'completion_analytics')};`
+    const envCommandsPath = `HEROKU_AC_COMMANDS_PATH=${path.join(this.completionsCachePath, 'commands')};`
     const zshSetup = `${this.flags['skip-ellipsis'] ? '' : this.waitingDots}
-
-HEROKU_AC_ANALYTICS_DIR=${path.join(this.completionsCachePath, 'completion_analytics')};
-HEROKU_AC_COMMANDS_PATH=${path.join(this.completionsCachePath, 'commands')};
+${envAnalyticsDir}
+${envCommandsPath}
 HEROKU_ZSH_AC_SETTERS_PATH=\${HEROKU_AC_COMMANDS_PATH}_functions && test -f $HEROKU_ZSH_AC_SETTERS_PATH && source $HEROKU_ZSH_AC_SETTERS_PATH;
 fpath=(
 ${path.join(__dirname, '..', '..', '..', 'autocomplete', 'zsh')}
@@ -170,14 +171,13 @@ $fpath
 autoload -Uz compinit;
 compinit;
 `
-    // for now, suspending bash completion
-//     const bashSetup = `HEROKU_AC_COMMANDS_PATH=${path.join(this.completionsCachePath, 'commands')};
-// HEROKU_BASH_AC_PATH=${path.join(__dirname, '..', '..', '..', 'autocomplete', 'bash', 'heroku.bash')}
-// test -f $HEROKU_BASH_AC_PATH && source $HEROKU_BASH_AC_PATH;
-// `
+    const bashSetup = `${envAnalyticsDir}
+${envCommandsPath}
+HEROKU_BASH_AC_PATH=${path.join(__dirname, '..', '..', '..', 'autocomplete', 'bash', 'heroku.bash')}
+test -f $HEROKU_BASH_AC_PATH && source $HEROKU_BASH_AC_PATH;
+`
     fs.writeFileSync(path.join(this.completionsCachePath, 'zsh_setup'), zshSetup)
-    // for now, suspending bash completion
-    // fs.writeFileSync(path.join(this.completionsCachePath, 'bash_setup'), bashSetup)
+    fs.writeFileSync(path.join(this.completionsCachePath, 'bash_setup'), bashSetup)
   }
 
   //   _genCompCli () {
