@@ -146,7 +146,7 @@ ${cmdsWithDesc.join('\n')}
     const zshSetup = `${skipEllipsis ? '' : this._genCompletionDotsFunc()}
 ${envAnalyticsDir}
 ${envCommandsPath}
-HEROKU_ZSH_AC_SETTERS_PATH=\${HEROKU_AC_COMMANDS_PATH}_functions && test -f $HEROKU_ZSH_AC_SETTERS_PATH && source $HEROKU_ZSH_AC_SETTERS_PATH;
+HEROKU_AC_ZSH_SETTERS_PATH=\${HEROKU_AC_COMMANDS_PATH}_functions && test -f $HEROKU_AC_ZSH_SETTERS_PATH && source $HEROKU_AC_ZSH_SETTERS_PATH;
 fpath=(
 ${path.join(__dirname, '..', '..', '..', 'autocomplete', 'zsh')}
 $fpath
@@ -156,7 +156,7 @@ compinit;
 `
     const bashSetup = `${envAnalyticsDir}
 ${envCommandsPath}
-HEROKU_BASH_AC_PATH=${path.join(__dirname, '..', '..', '..', 'autocomplete', 'bash', 'heroku.bash')} test -f $HEROKU_BASH_AC_PATH && source $HEROKU_BASH_AC_PATH;
+HEROKU_AC_BASH_COMPFUNC_PATH=${path.join(__dirname, '..', '..', '..', 'autocomplete', 'bash', 'heroku.bash')} test -f $HEROKU_AC_BASH_COMPFUNC_PATH && source $HEROKU_AC_BASH_COMPFUNC_PATH;
 `
     return [bashSetup, zshSetup]
   }

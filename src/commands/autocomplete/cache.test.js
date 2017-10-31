@@ -87,7 +87,7 @@ bindkey "^I" expand-or-complete-with-dots`)
       let shellSetups = await cmd._genShellSetups()
       expect(shellSetups[0]).toBe(`HEROKU_AC_ANALYTICS_DIR=${cmd.config.cacheDir}/completions/completion_analytics;
 HEROKU_AC_COMMANDS_PATH=${cmd.config.cacheDir}/completions/commands;
-HEROKU_BASH_AC_PATH=${AC_PLUGIN_PATH}/autocomplete/bash/heroku.bash test -f $HEROKU_BASH_AC_PATH && source $HEROKU_BASH_AC_PATH;
+HEROKU_AC_BASH_COMPFUNC_PATH=${AC_PLUGIN_PATH}/autocomplete/bash/heroku.bash test -f $HEROKU_AC_BASH_COMPFUNC_PATH && source $HEROKU_AC_BASH_COMPFUNC_PATH;
 `)
     })
 
@@ -103,7 +103,7 @@ zle -N expand-or-complete-with-dots
 bindkey "^I" expand-or-complete-with-dots
 HEROKU_AC_ANALYTICS_DIR=${cmd.config.cacheDir}/completions/completion_analytics;
 HEROKU_AC_COMMANDS_PATH=${cmd.config.cacheDir}/completions/commands;
-HEROKU_ZSH_AC_SETTERS_PATH=\${HEROKU_AC_COMMANDS_PATH}_functions && test -f $HEROKU_ZSH_AC_SETTERS_PATH && source $HEROKU_ZSH_AC_SETTERS_PATH;
+HEROKU_AC_ZSH_SETTERS_PATH=\${HEROKU_AC_COMMANDS_PATH}_functions && test -f $HEROKU_AC_ZSH_SETTERS_PATH && source $HEROKU_AC_ZSH_SETTERS_PATH;
 fpath=(
 ${AC_PLUGIN_PATH}/autocomplete/zsh
 $fpath
@@ -119,7 +119,7 @@ compinit;
       expect(shellSetups[1]).toBe(`
 HEROKU_AC_ANALYTICS_DIR=${cmd.config.cacheDir}/completions/completion_analytics;
 HEROKU_AC_COMMANDS_PATH=${cmd.config.cacheDir}/completions/commands;
-HEROKU_ZSH_AC_SETTERS_PATH=\${HEROKU_AC_COMMANDS_PATH}_functions && test -f $HEROKU_ZSH_AC_SETTERS_PATH && source $HEROKU_ZSH_AC_SETTERS_PATH;
+HEROKU_AC_ZSH_SETTERS_PATH=\${HEROKU_AC_COMMANDS_PATH}_functions && test -f $HEROKU_AC_ZSH_SETTERS_PATH && source $HEROKU_AC_ZSH_SETTERS_PATH;
 fpath=(
 ${AC_PLUGIN_PATH}/autocomplete/zsh
 $fpath
