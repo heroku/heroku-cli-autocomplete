@@ -44,9 +44,8 @@ export default class AutocompleteInit extends AutocompleteBase {
             const Command = typeof c === 'function' ? c : convertFromV5((c: any))
             const publicFlags = Object.keys(Command.flags || {}).filter(flag => !Command.flags[flag].hidden).map(flag => `--${flag}`).join(' ')
             const flags = publicFlags.length ? ` ${publicFlags}` : ''
-            const namespace = p.namespace ? `${p.namespace}:` : ''
-            const id = Command.command ? `${Command.topic}:${Command.command}` : Command.topic
-            this.cmdsWithFlags.push(`${namespace}${id}${flags}`)
+            const id = this._genCmdID(Command)
+            this.cmdsWithFlags.push(`${id}${flags}`)
           } catch (err) {
             debug(`Error creating autocomplete a command in ${p.name}, moving on...`)
             debug(err.message)
@@ -75,14 +74,10 @@ export default class AutocompleteInit extends AutocompleteBase {
         return commands.map(c => {
           try {
             if (c.hidden || !c.topic) return
-            // TODO: fix here
-            // convertFromV5 pukes here w/o topic
-            // but we lose this cmd
             const cmd = typeof c === 'function' ? c : convertFromV5((c: any))
-            const namespace = (p.namespace || '')
             // create completion setters
-            this._addFlagsSetterFn(this._genCmdFlagSetter(cmd, namespace))
-            this._addCmdWithDesc(this._genCmdWithDescription(cmd, namespace))
+            this._addFlagsSetterFn(this._genCmdFlagSetter(cmd))
+            this._addCmdWithDesc(this._genCmdWithDescription(cmd))
           } catch (err) {
             debug(`Error creating azsh autocomplete command in ${p.name}, moving on...`)
             debug(err.message)
@@ -108,8 +103,8 @@ export default class AutocompleteInit extends AutocompleteBase {
     if (cmd) this.cmdsWithDesc.push(cmd)
   }
 
-  _genCmdFlagSetter (Command: Class<Command<*>>, namespace: string): ?string {
-    const id = this._genCmdID(Command, namespace)
+  _genCmdFlagSetter (Command: Class<Command<*>>): ?string {
+    const id = this._genCmdID(Command)
     const flagscompletions = Object.keys(Command.flags || {})
       .filter(flag => !Command.flags[flag].hidden)
       .map(flag => {
@@ -135,16 +130,13 @@ ${flagscompletions}
     }
   }
 
-  _genCmdWithDescription (Command: Class<Command<*>>, namespace: string): string {
+  _genCmdWithDescription (Command: Class<Command<*>>): string {
     const description = Command.description ? `:"${Command.description}"` : ''
-    return `"${this._genCmdID(Command, namespace).replace(/:/g, '\\:')}"${description}`
+    return `"${this._genCmdID(Command).replace(/:/g, '\\:')}"${description}`
   }
 
-  // TODO: remove namespace bits
-  _genCmdID (Command: Class<Command<*>>, namespace: string): string {
-    const ns = namespace ? `${namespace}:` : ''
-    const id = Command.command ? `${ns}${Command.topic}:${Command.command}` : `${ns}${Command.topic}`
-    return id
+  _genCmdID (Command: Class<Command<*>>): string {
+    return Command.command ? `${Command.topic}:${Command.command}` : Command.topic
   }
 
   _genAllCmdsListSetter (): string {
@@ -180,13 +172,6 @@ test -f $HEROKU_BASH_AC_PATH && source $HEROKU_BASH_AC_PATH;
     fs.writeFileSync(path.join(this.completionsCachePath, 'bash_setup'), bashSetup)
   }
 
-  //   _genCompCli () {
-  //     return `_compadd_cli () {
-  //   compadd $(echo $(heroku autocomplete:options "\${words}"))
-  // }
-  // `
-  //   }
-
   get waitingDots (): string {
     return `# http://stackoverflow.com/a/844299
 expand-or-complete-with-dots() {
@@ -201,7 +186,6 @@ bindkey "^I" expand-or-complete-with-dots`
   _writeZshSetterFunctionsToCache () {
     const completions = []
       .concat(this._genAllCmdsListSetter())
-      // .concat(this._genCompCli())
       .concat(this.flagsSetterFns)
       .join('\n')
     fs.writeFileSync(path.join(this.completionsCachePath, 'commands_functions'), completions)
