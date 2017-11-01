@@ -23,7 +23,7 @@ class AutocompleteCache extends AutocompleteCacheBase {
 }
 
 // autocomplete will throw error on windows
-let skipWindows = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest : test
+let runtest = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest : test
 
 describe('AutocompleteCache', () => {
   beforeAll(() => {
@@ -31,7 +31,7 @@ describe('AutocompleteCache', () => {
   })
 
   describe('flags', () => {
-    skipWindows('--skip-ellipsis', async () => {
+    runtest('--skip-ellipsis', async () => {
       let cmd = await AutocompleteCache.mock('--skip-ellipsis')
       expect(cmd.flags['skip-ellipsis']).toBe(true)
       cmd = await AutocompleteCache.mock('-e')
@@ -47,25 +47,25 @@ describe('AutocompleteCache', () => {
       cmd.plugins = [FooPlugin]
     })
 
-    skipWindows('#_genCmdID', async () => {
+    runtest('#_genCmdID', async () => {
       expect(cmd._genCmdID(AutocompleteCache)).toBe('autocomplete:cache')
     })
 
-    skipWindows('#_genCmdWithDescription', async () => {
+    runtest('#_genCmdWithDescription', async () => {
       expect(await cmd._genCmdWithDescription(AutocompleteCache)).toBe(`"autocomplete\\:cache":"autocomplete cache builder"`)
     })
 
-    skipWindows('#_genCmdPublicFlags', async () => {
+    runtest('#_genCmdPublicFlags', async () => {
       expect(cmd._genCmdPublicFlags(AutocompleteCache)).toBe('--skip-ellipsis --visable')
       expect(cmd._genCmdPublicFlags(Command)).toBe('')
     })
 
-    skipWindows('#_genCmdsCacheStrings (cmdsWithFlags)', async () => {
+    runtest('#_genCmdsCacheStrings (cmdsWithFlags)', async () => {
       const cacheStrings = await cmd._genCmdsCacheStrings()
       expect(cacheStrings.cmdsWithFlags).toBe('foo:alpha --bar\nfoo:beta')
     })
 
-    skipWindows('#_genCmdsCacheStrings (cmdFlagsSetters)', async () => {
+    runtest('#_genCmdsCacheStrings (cmdFlagsSetters)', async () => {
       const cacheStrings = await cmd._genCmdsCacheStrings()
       expect(cacheStrings.cmdFlagsSetters).toBe(`_set_foo_alpha_flags () {
 _flags=(
@@ -76,7 +76,7 @@ _flags=(
 # no flags for foo:beta`)
     })
 
-    skipWindows('#_genCmdsCacheStrings (cmdsWithDescSetter)', async () => {
+    runtest('#_genCmdsCacheStrings (cmdsWithDescSetter)', async () => {
       const cacheStrings = await cmd._genCmdsCacheStrings()
       expect(cacheStrings.cmdsWithDescSetter).toBe(`
 _set_all_commands_list () {
@@ -88,7 +88,7 @@ _all_commands_list=(
 `)
     })
 
-    skipWindows('#_genCompletionDotsFunc', async () => {
+    runtest('#_genCompletionDotsFunc', async () => {
       expect(await cmd._genCompletionDotsFunc()).toBe(`expand-or-complete-with-dots() {
   echo -n "..."
   zle expand-or-complete
@@ -98,7 +98,7 @@ zle -N expand-or-complete-with-dots
 bindkey "^I" expand-or-complete-with-dots`)
     })
 
-    skipWindows('#_genShellSetups (0: bash)', async () => {
+    runtest('#_genShellSetups (0: bash)', async () => {
       let cmd = await new AutocompleteCacheBase()
       let shellSetups = await cmd._genShellSetups()
       expect(shellSetups[0]).toBe(`HEROKU_AC_ANALYTICS_DIR=${cmd.config.cacheDir}/completions/completion_analytics;
@@ -107,7 +107,7 @@ HEROKU_BASH_AC_PATH=${AC_PLUGIN_PATH}/autocomplete/bash/heroku.bash test -f $HER
 `)
     })
 
-    skipWindows('#_genShellSetups (1: zsh)', async () => {
+    runtest('#_genShellSetups (1: zsh)', async () => {
       let cmd = await new AutocompleteCacheBase()
       let shellSetups = await cmd._genShellSetups()
       expect(shellSetups[1]).toBe(`expand-or-complete-with-dots() {
@@ -129,7 +129,7 @@ compinit;
 `)
     })
 
-    skipWindows('#_genShellSetups (1: zsh w/o ellipsis)', async () => {
+    runtest('#_genShellSetups (1: zsh w/o ellipsis)', async () => {
       let cmd = await new AutocompleteCacheBase()
       let shellSetups = await cmd._genShellSetups(true)
       expect(shellSetups[1]).toBe(`
@@ -145,7 +145,7 @@ compinit;
 `)
     })
 
-    skipWindows('#_genZshAllCmdsListSetter', async () => {
+    runtest('#_genZshAllCmdsListSetter', async () => {
       let cmdsWithDesc = [`"foo\\:alpha":"foo:alpha description"`, `"foo\\:beta":"foo:beta description"`]
       expect(await cmd._genZshAllCmdsListSetter(cmdsWithDesc)).toBe(`
 _set_all_commands_list () {
@@ -157,7 +157,7 @@ _all_commands_list=(
 `)
     })
 
-    skipWindows('#_genZshCmdFlagsSetter', async () => {
+    runtest('#_genZshCmdFlagsSetter', async () => {
       expect(await cmd._genZshCmdFlagsSetter(AutocompleteCache)).toBe(`_set_autocomplete_cache_flags () {
 _flags=(
 "--skip-ellipsis[(switch) Do not add an ellipsis to zsh autocomplete setup]"

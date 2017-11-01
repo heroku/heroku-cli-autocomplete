@@ -5,9 +5,9 @@ import os from 'os'
 import cli from 'cli-ux'
 
 // autocomplete will throw error on windows
-let skipWindows = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest : test
+let runtest = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest : test
 
-skipWindows('outputs install instructions for zsh', async () => {
+runtest('outputs install instructions for zsh', async () => {
   cli.config.mock = true
   await Autocomplete.mock('zsh')
   expect(cli.stdout.output).toMatch(`Setup Instructions for Heroku CLI Autocomplete ---
@@ -45,7 +45,7 @@ To uninstall Heroku CLI Autocomplete:
 Enjoy!`)
 })
 
-skipWindows('outputs install instructions for bash', async () => {
+runtest('outputs install instructions for bash', async () => {
   cli.config.mock = true
   await Autocomplete.mock('bash')
   expect(cli.stdout.output).toMatch(`Setup Instructions for Heroku CLI Autocomplete ---
@@ -79,14 +79,14 @@ To uninstall Heroku CLI Autocomplete:
 Enjoy!`)
 })
 
-skipWindows('skips instructions', async () => {
+runtest('skips instructions', async () => {
   cli.config.mock = true
   await Autocomplete.mock('--skip-instructions')
   expect(cli.stdout.output).toMatch(`
 Enjoy!`)
 })
 
-skipWindows('errors on unsupported shell', async () => {
+runtest('errors on unsupported shell', async () => {
   cli.config.mock = true
   try {
     await Autocomplete.mock('fish')
