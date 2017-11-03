@@ -20,6 +20,7 @@ export default class AutocompleteCache extends AutocompleteBase {
   static topic = 'autocomplete'
   static command = 'cache'
   static description = 'autocomplete cache builder'
+  // hide until public release
   static hidden = true
   static flags = {
     'skip-ellipsis': flags.boolean({description: 'Do not add an ellipsis to zsh autocomplete setup', char: 'e'})

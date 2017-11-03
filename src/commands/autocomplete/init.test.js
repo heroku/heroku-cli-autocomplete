@@ -25,11 +25,9 @@ class AutocompleteCache extends AutocompleteCacheBase {
 // autocomplete will throw error on windows
 let runtest = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest : test
 
-describe('AutocompleteCache', () => {
-  beforeAll(() => {
-    cli.config.mock = true
-  })
+cli.config.mock = true
 
+describe('AutocompleteCache', () => {
   describe('flags', () => {
     runtest('--skip-ellipsis', async () => {
       let cmd = await AutocompleteCache.mock('--skip-ellipsis')
@@ -40,7 +38,7 @@ describe('AutocompleteCache', () => {
   })
 
   // Unit test private methods for extra coverage
-  describe('unit tests', () => {
+  describe('private methods', () => {
     let cmd
     beforeAll(() => {
       cmd = new AutocompleteCache()

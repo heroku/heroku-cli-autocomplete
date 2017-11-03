@@ -7,8 +7,9 @@ import cli from 'cli-ux'
 // autocomplete will throw error on windows
 let runtest = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest : test
 
+cli.config.mock = true
+
 runtest('outputs install instructions for zsh', async () => {
-  cli.config.mock = true
   await Autocomplete.mock('zsh')
   expect(cli.stdout.output).toMatch(`Setup Instructions for Heroku CLI Autocomplete ---
 
@@ -46,7 +47,6 @@ Enjoy!`)
 })
 
 runtest('outputs install instructions for bash', async () => {
-  cli.config.mock = true
   await Autocomplete.mock('bash')
   expect(cli.stdout.output).toMatch(`Setup Instructions for Heroku CLI Autocomplete ---
 
@@ -80,14 +80,12 @@ Enjoy!`)
 })
 
 runtest('skips instructions', async () => {
-  cli.config.mock = true
   await Autocomplete.mock('--skip-instructions')
   expect(cli.stdout.output).toMatch(`
 Enjoy!`)
 })
 
 runtest('errors on unsupported shell', async () => {
-  cli.config.mock = true
   try {
     await Autocomplete.mock('fish')
   } catch (e) {
