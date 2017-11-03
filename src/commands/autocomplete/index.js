@@ -3,7 +3,7 @@
 import {AutocompleteBase} from '../../autocomplete'
 import cli from 'cli-ux'
 import {flags} from 'cli-engine-heroku'
-import AutocompleteInit from './init'
+import AutocompleteCacheBuilder from './cache'
 
 export default class Autocomplete extends AutocompleteBase {
   static topic = 'autocomplete'
@@ -12,7 +12,6 @@ export default class Autocomplete extends AutocompleteBase {
   static hidden = true
   static args = [{name: 'shell', description: 'shell type', required: false}]
   static flags = {
-    'skip-ellipsis': flags.boolean({description: 'Do not add an ellipsis to zsh autocomplete setup', char: 'e'}),
     'skip-instructions': flags.boolean({description: 'Do not show installation instructions', char: 's'})
   }
 
@@ -63,8 +62,7 @@ ${cli.color.cyan('$ heroku apps:info --app=<TAB>')}
     }
 
     cli.action.start(`${cli.color.bold('Building autocomplete cache')}`)
-    const argv = ['heroku', 'autocomplete:init'].concat(this.config.argv.filter(a => a === '--skip-ellipsis' || a === '-e'))
-    await AutocompleteInit.run(Object.assign(this.config, {argv}))
+    await AutocompleteCacheBuilder.run(Object.assign(this.config, {argv: [this.argv[0], 'autocomplete:cache']}))
     cli.action.stop()
 
     cli.log('\nEnjoy!')

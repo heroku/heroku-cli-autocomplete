@@ -6,7 +6,6 @@ import fs from 'fs-extra'
 import Plugins from 'cli-engine/lib/plugins'
 import {convertFromV5} from '../../legacy'
 import {AutocompleteBase} from '../../autocomplete'
-import {flags} from 'cli-engine-heroku'
 
 const debug = require('debug')('heroku:autocomplete')
 
@@ -16,15 +15,12 @@ type CacheStrings = {
   cmdsWithDescSetter: string
 }
 
-export default class AutocompleteCache extends AutocompleteBase {
+export default class AutocompleteCacheBuilder extends AutocompleteBase {
   static topic = 'autocomplete'
-  static command = 'cache'
+  static command = 'buildcache'
   static description = 'autocomplete cache builder'
   // hide until public release
   static hidden = true
-  static flags = {
-    'skip-ellipsis': flags.boolean({description: 'Do not add an ellipsis to zsh autocomplete setup', char: 'e'})
-  }
   static aliases = ['autocomplete:init']
 
   plugins: Array<Plugins> = []
@@ -46,9 +42,13 @@ export default class AutocompleteCache extends AutocompleteBase {
     const zshFuncs = `${cacheStrings.cmdsWithDescSetter}\n${cacheStrings.cmdFlagsSetters}`
     await fs.writeFile(path.join(this.completionsCachePath, 'commands_functions'), zshFuncs)
     // 5. save shell setups
-    const [bashSetup, zshSetup] = this._genShellSetups(this.flags['skip-ellipsis'] || false)
-    fs.writeFileSync(path.join(this.completionsCachePath, 'bash_setup'), bashSetup)
-    fs.writeFileSync(path.join(this.completionsCachePath, 'zsh_setup'), zshSetup)
+    const [bashSetup, zshSetup] = this._genShellSetups(this.skipEllipsis)
+    await fs.writeFile(path.join(this.completionsCachePath, 'bash_setup'), bashSetup)
+    await fs.writeFile(path.join(this.completionsCachePath, 'zsh_setup'), zshSetup)
+  }
+
+  get skipEllipsis (): boolean {
+    return process.env.HEROKU_AC_ZSH_SKIP_ELLIPSIS === '1'
   }
 
   async hydratePlugins () {

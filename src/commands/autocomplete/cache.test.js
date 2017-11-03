@@ -1,24 +1,19 @@
 // @flow
 
-import AutocompleteCacheBase from './init'
+import AutocompleteCacheBuilder from './cache'
 import os from 'os'
 import cli from 'cli-ux'
-import Command from 'cli-engine-command'
 import {flags} from 'cli-engine-heroku'
 import path from 'path'
 
 const FooPlugin = require('../../../test/roots/foo-plugin')
 const AC_PLUGIN_PATH = path.join(__dirname, '..', '..', '..')
 
-class AutocompleteCache extends AutocompleteCacheBase {
+class CacheBuildFlagsTest extends AutocompleteCacheBuilder {
   static flags = {
-    'skip-ellipsis': flags.boolean({description: 'Do not add an ellipsis to zsh autocomplete setup', char: 'e'}),
+    app: flags.app(),
     visable: flags.boolean({description: 'Visable flag', char: 'v'}),
     hidden: flags.boolean({description: 'Hidden flag', char: 'h', hidden: true})
-  }
-
-  get completionsCachePath () {
-    return './tmp'
   }
 }
 
@@ -27,35 +22,26 @@ let runtest = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest
 
 cli.config.mock = true
 
-describe('AutocompleteCache', () => {
-  describe('flags', () => {
-    runtest('--skip-ellipsis', async () => {
-      let cmd = await AutocompleteCache.mock('--skip-ellipsis')
-      expect(cmd.flags['skip-ellipsis']).toBe(true)
-      cmd = await AutocompleteCache.mock('-e')
-      expect(cmd.flags['skip-ellipsis']).toBe(true)
-    })
-  })
-
+describe('AutocompleteCacheBuilder', () => {
   // Unit test private methods for extra coverage
   describe('private methods', () => {
     let cmd
     beforeAll(() => {
-      cmd = new AutocompleteCache()
+      cmd = new AutocompleteCacheBuilder()
       cmd.plugins = [FooPlugin]
     })
 
     runtest('#_genCmdID', async () => {
-      expect(cmd._genCmdID(AutocompleteCache)).toBe('autocomplete:cache')
+      expect(cmd._genCmdID(AutocompleteCacheBuilder)).toBe('autocomplete:buildcache')
     })
 
     runtest('#_genCmdWithDescription', async () => {
-      expect(await cmd._genCmdWithDescription(AutocompleteCache)).toBe(`"autocomplete\\:cache":"autocomplete cache builder"`)
+      expect(await cmd._genCmdWithDescription(AutocompleteCacheBuilder)).toBe(`"autocomplete\\:buildcache":"autocomplete cache builder"`)
     })
 
     runtest('#_genCmdPublicFlags', async () => {
-      expect(cmd._genCmdPublicFlags(AutocompleteCache)).toBe('--skip-ellipsis --visable')
-      expect(cmd._genCmdPublicFlags(Command)).toBe('')
+      expect(cmd._genCmdPublicFlags(CacheBuildFlagsTest)).toBe('--app --visable')
+      expect(cmd._genCmdPublicFlags(AutocompleteCacheBuilder)).toBe('')
     })
 
     runtest('#_genCmdsCacheStrings (cmdsWithFlags)', async () => {
@@ -97,7 +83,7 @@ bindkey "^I" expand-or-complete-with-dots`)
     })
 
     runtest('#_genShellSetups (0: bash)', async () => {
-      let cmd = await new AutocompleteCacheBase()
+      let cmd = await new AutocompleteCacheBuilder()
       let shellSetups = await cmd._genShellSetups()
       expect(shellSetups[0]).toBe(`HEROKU_AC_ANALYTICS_DIR=${cmd.config.cacheDir}/completions/completion_analytics;
 HEROKU_AC_COMMANDS_PATH=${cmd.config.cacheDir}/completions/commands;
@@ -106,7 +92,7 @@ HEROKU_BASH_AC_PATH=${AC_PLUGIN_PATH}/autocomplete/bash/heroku.bash test -f $HER
     })
 
     runtest('#_genShellSetups (1: zsh)', async () => {
-      let cmd = await new AutocompleteCacheBase()
+      let cmd = await new AutocompleteCacheBuilder()
       let shellSetups = await cmd._genShellSetups()
       expect(shellSetups[1]).toBe(`expand-or-complete-with-dots() {
   echo -n "..."
@@ -128,7 +114,7 @@ compinit;
     })
 
     runtest('#_genShellSetups (1: zsh w/o ellipsis)', async () => {
-      let cmd = await new AutocompleteCacheBase()
+      let cmd = await new AutocompleteCacheBuilder()
       let shellSetups = await cmd._genShellSetups(true)
       expect(shellSetups[1]).toBe(`
 HEROKU_AC_ANALYTICS_DIR=${cmd.config.cacheDir}/completions/completion_analytics;
@@ -156,9 +142,9 @@ _all_commands_list=(
     })
 
     runtest('#_genZshCmdFlagsSetter', async () => {
-      expect(await cmd._genZshCmdFlagsSetter(AutocompleteCache)).toBe(`_set_autocomplete_cache_flags () {
+      expect(await cmd._genZshCmdFlagsSetter(CacheBuildFlagsTest)).toBe(`_set_autocomplete_buildcache_flags () {
 _flags=(
-"--skip-ellipsis[(switch) Do not add an ellipsis to zsh autocomplete setup]"
+"--app=-[(autocomplete) app to run command against]: :_compadd_cli"
 "--visable[(switch) Visable flag]"
 )
 }
