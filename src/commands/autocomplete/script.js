@@ -24,11 +24,11 @@ export default class AutocompleteScript extends AutocompleteBase {
       let shellUpcase = shell.toUpperCase()
       cli.log(`${this._prefix}CLI_ENGINE_AC_${shellUpcase}_SETUP_PATH=${path.join(this.completionsCachePath, `${shell}_setup`)} && test -f $CLI_ENGINE_AC_${shellUpcase}_SETUP_PATH && source $CLI_ENGINE_AC_${shellUpcase}_SETUP_PATH;`)
     } else {
-      cli.error(`No autocomplete script for ${shell}. Run $ heroku autocomplete for install instructions.`)
+      cli.error(`No autocomplete script for ${shell}. Run $ ${this.config.bin} autocomplete for install instructions.`)
     }
   }
 
   get _prefix (): string {
-    return `\n# heroku autocomplete setup\n`
+    return `\n# ${this.config.bin} autocomplete setup\n`
   }
 }
