@@ -87,7 +87,7 @@ bindkey "^I" expand-or-complete-with-dots`)
       let shellSetups = await cmd._genShellSetups()
       expect(shellSetups[0]).toBe(`HEROKU_AC_ANALYTICS_DIR=${cmd.config.cacheDir}/completions/completion_analytics;
 HEROKU_AC_COMMANDS_PATH=${cmd.config.cacheDir}/completions/commands;
-HEROKU_AC_BASH_COMPFUNC_PATH=${AC_PLUGIN_PATH}/autocomplete/bash/heroku.bash test -f $HEROKU_AC_BASH_COMPFUNC_PATH && source $HEROKU_AC_BASH_COMPFUNC_PATH;
+HEROKU_AC_BASH_COMPFUNC_PATH=${AC_PLUGIN_PATH}/autocomplete/bash/heroku.bash && test -f $HEROKU_AC_BASH_COMPFUNC_PATH && source $HEROKU_AC_BASH_COMPFUNC_PATH;
 `)
     })
 
@@ -144,7 +144,7 @@ _all_commands_list=(
     runtest('#_genZshCmdFlagsSetter', async () => {
       expect(await cmd._genZshCmdFlagsSetter(CacheBuildFlagsTest)).toBe(`_set_autocomplete_buildcache_flags () {
 _flags=(
-"--app=-[(autocomplete) app to run command against]: :_compadd_cli"
+"--app=-[(autocomplete) app to run command against]: :_compadd_flag_options"
 "--visable[(switch) Visable flag]"
 )
 }

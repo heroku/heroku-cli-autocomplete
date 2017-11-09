@@ -10,13 +10,19 @@ let runtest = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest
 cli.config.mock = true
 
 runtest('outputs autocomplete script for .zshrc', async () => {
-  await AutocompleteScript.mock('zsh')
-  expect(cli.stdout.output).toMatch(/\\n# heroku autocomplete setup\\nHEROKU_AC_ZSH_SETUP_PATH=(.+)\/completions\/zsh_setup && test -f \$HEROKU_AC_ZSH_SETUP_PATH && source \$HEROKU_AC_ZSH_SETUP_PATH;\n/)
+  let cmd = await AutocompleteScript.mock('zsh')
+  expect(cli.stdout.output).toMatch(`
+# heroku autocomplete setup
+HEROKU_AC_ZSH_SETUP_PATH=${cmd.config.cacheDir}/completions/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH;
+`)
 })
 
 runtest('outputs autocomplete script for .bashrc', async () => {
-  await AutocompleteScript.mock('bash')
-  expect(cli.stdout.output).toMatch(/\\n# heroku autocomplete setup\\nHEROKU_AC_BASH_SETUP_PATH=(.+)\/completions\/bash_setup && test -f \$HEROKU_AC_BASH_SETUP_PATH && source \$HEROKU_AC_BASH_SETUP_PATH;\n/)
+  let cmd = await AutocompleteScript.mock('bash')
+  expect(cli.stdout.output).toMatch(`
+# heroku autocomplete setup
+HEROKU_AC_BASH_SETUP_PATH=${cmd.config.cacheDir}/completions/bash_setup && test -f $HEROKU_AC_BASH_SETUP_PATH && source $HEROKU_AC_BASH_SETUP_PATH;
+`)
 })
 
 runtest('errors on unsupported shell', async () => {

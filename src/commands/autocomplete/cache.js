@@ -109,12 +109,12 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
       .map(flag => {
         const f = Command.flags[flag]
         const name = f.parse ? `${flag}=-` : flag
-        let cachecompl
+        let cachecompl = ''
         if (f.completion) {
-          cachecompl = `: :_compadd_cli`
+          cachecompl = `: :_compadd_flag_options`
         }
         const help = f.parse ? (f.completion ? '(autocomplete) ' : '') : '(switch) '
-        const completion = `--${name}[${help}${f.description}]${cachecompl || ''}`
+        const completion = `--${name}[${help}${f.description}]${cachecompl}`
         return `"${completion}"`
       })
       .join('\n')
@@ -156,7 +156,7 @@ compinit;
 `
     const bashSetup = `${envAnalyticsDir}
 ${envCommandsPath}
-HEROKU_AC_BASH_COMPFUNC_PATH=${path.join(__dirname, '..', '..', '..', 'autocomplete', 'bash', 'heroku.bash')} test -f $HEROKU_AC_BASH_COMPFUNC_PATH && source $HEROKU_AC_BASH_COMPFUNC_PATH;
+HEROKU_AC_BASH_COMPFUNC_PATH=${path.join(__dirname, '..', '..', '..', 'autocomplete', 'bash', 'heroku.bash')} && test -f $HEROKU_AC_BASH_COMPFUNC_PATH && source $HEROKU_AC_BASH_COMPFUNC_PATH;
 `
     return [bashSetup, zshSetup]
   }
