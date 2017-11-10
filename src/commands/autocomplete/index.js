@@ -33,15 +33,13 @@ export default class Autocomplete extends AutocompleteBase {
 1) Add the autocomplete env vars to your ${shell} profile
 
 ${cli.color.cyan(`$ printf "$(heroku autocomplete:script ${shell})" >> ~/.${shell}rc`)}
-${shell === 'zsh' ? `
-NOTE: Run compaudit to ensure no permissions conflicts are present (some versions of ${shell} may not have this command)
 
-${cli.color.cyan('$ compaudit')}
-` : ''}
 2) Source your updated ${shell} profile
 
 ${cli.color.cyan(`$ source ~/.${shell}rc`)}
-
+${shell === 'zsh' ? `
+NOTE: After sourcing, you can run \`${cli.color.cyan('$ compaudit')}\` to ensure no permissions conflicts are present
+` : ''}
 3) Test command completion by pressing <TAB>, e.g.:
 
 ${cli.color.cyan('$ heroku <TAB>')}

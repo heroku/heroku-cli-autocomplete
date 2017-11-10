@@ -17,13 +17,11 @@ runtest('outputs install instructions for zsh', async () => {
 
 $ printf "$(heroku autocomplete:script zsh)" >> ~/.zshrc
 
-NOTE: Run compaudit to ensure no permissions conflicts are present (some versions of zsh may not have this command)
-
-$ compaudit
-
 2) Source your updated zsh profile
 
 $ source ~/.zshrc
+
+NOTE: After sourcing, you can run \`$ compaudit\` to ensure no permissions conflicts are present
 
 3) Test command completion by pressing <TAB>, e.g.:
 
