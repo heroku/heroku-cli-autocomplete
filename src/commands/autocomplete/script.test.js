@@ -13,7 +13,7 @@ runtest('outputs autocomplete script for .zshrc', async () => {
   let cmd = await AutocompleteScript.mock('zsh')
   expect(cli.stdout.output).toMatch(`
 # heroku autocomplete setup
-HEROKU_AC_ZSH_SETUP_PATH=${cmd.config.cacheDir}/completions/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH;
+CLI_ENGINE_AC_ZSH_SETUP_PATH=${cmd.config.cacheDir}/completions/zsh_setup && test -f $CLI_ENGINE_AC_ZSH_SETUP_PATH && source $CLI_ENGINE_AC_ZSH_SETUP_PATH;
 `)
 })
 
@@ -21,7 +21,7 @@ runtest('outputs autocomplete script for .bashrc', async () => {
   let cmd = await AutocompleteScript.mock('bash')
   expect(cli.stdout.output).toMatch(`
 # heroku autocomplete setup
-HEROKU_AC_BASH_SETUP_PATH=${cmd.config.cacheDir}/completions/bash_setup && test -f $HEROKU_AC_BASH_SETUP_PATH && source $HEROKU_AC_BASH_SETUP_PATH;
+CLI_ENGINE_AC_BASH_SETUP_PATH=${cmd.config.cacheDir}/completions/bash_setup && test -f $CLI_ENGINE_AC_BASH_SETUP_PATH && source $CLI_ENGINE_AC_BASH_SETUP_PATH;
 `)
 })
 

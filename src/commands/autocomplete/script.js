@@ -22,7 +22,7 @@ export default class AutocompleteScript extends AutocompleteBase {
 
     if (shell === 'bash' || shell === 'zsh') {
       let shellUpcase = shell.toUpperCase()
-      cli.log(`${this._prefix}HEROKU_AC_${shellUpcase}_SETUP_PATH=${path.join(this.completionsCachePath, `${shell}_setup`)} && test -f $HEROKU_AC_${shellUpcase}_SETUP_PATH && source $HEROKU_AC_${shellUpcase}_SETUP_PATH;`)
+      cli.log(`${this._prefix}CLI_ENGINE_AC_${shellUpcase}_SETUP_PATH=${path.join(this.completionsCachePath, `${shell}_setup`)} && test -f $CLI_ENGINE_AC_${shellUpcase}_SETUP_PATH && source $CLI_ENGINE_AC_${shellUpcase}_SETUP_PATH;`)
     } else {
       cli.error(`No autocomplete script for ${shell}. Run $ heroku autocomplete for install instructions.`)
     }
