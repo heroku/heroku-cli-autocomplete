@@ -7,8 +7,8 @@ _heroku () {
 
   ## all commands
   _complete_commands () {
-   mkdir -p "$HEROKU_AC_ANALYTICS_DIR"
-   touch "$HEROKU_AC_ANALYTICS_DIR"/command
+   mkdir -p "$CLI_ENGINE_AC_ANALYTICS_DIR"
+   touch "$CLI_ENGINE_AC_ANALYTICS_DIR"/command
    local -a _all_commands_list
    if type _set_all_commands_list >/dev/null 2>&1; then
      _set_all_commands_list
@@ -16,23 +16,27 @@ _heroku () {
      return
    fi
    # fallback to grep'ing cmds from cache
-   compadd $(grep -oe '^[a-zA-Z0-9:_-]\+' $HEROKU_AC_COMMANDS_PATH)
+   compadd $(grep -oe '^[a-zA-Z0-9:_-]\+' $CLI_ENGINE_AC_COMMANDS_PATH)
   }
   ## end all commands
 
-  _compadd_cli () {
+  _compadd_args () {
     compadd $(echo $(heroku autocomplete:options "${words}"))
+  }
+
+  _compadd_flag_options () {
+    touch "$CLI_ENGINE_AC_ANALYTICS_DIR"/value
+    _compadd_args
   }
 
   if [ $CURRENT -gt 2 ]; then
     if [[ "$_cur" == -* ]]; then
-      touch "$HEROKU_AC_ANALYTICS_DIR"/flag
+      touch "$CLI_ENGINE_AC_ANALYTICS_DIR"/flag
       local _flag_completion_func="_set_${_command_id//:/_}_flags"
       declare -f $_flag_completion_func >/dev/null && $_flag_completion_func
     else
-      if type _compadd_cli >/dev/null 2>&1; then
-        touch "$HEROKU_AC_ANALYTICS_DIR"/value
-        _compadd_cli
+      if type _compadd_args >/dev/null 2>&1; then
+        _compadd_args
       fi
     fi
   fi

@@ -5,10 +5,30 @@ import os from 'os'
 import cli from 'cli-ux'
 
 // autocomplete will throw error on windows
-let skipWindows = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest : test
+let runtest = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest : test
 
-skipWindows('outputs autocomplete script for .zshrc', async () => {
-  cli.config.mock = true
-  await AutocompleteScript.mock('zsh')
-  expect(cli.stdout.output).toMatch(/\\n# heroku autocomplete setup\\nHEROKU_ZSH_AC_SETUP_PATH=(.+)\/completions\/zsh_setup && test -f \$HEROKU_ZSH_AC_SETUP_PATH && source \$HEROKU_ZSH_AC_SETUP_PATH;\n/)
+cli.config.mock = true
+
+runtest('outputs autocomplete script for .zshrc', async () => {
+  let cmd = await AutocompleteScript.mock('zsh')
+  expect(cli.stdout.output).toMatch(`
+# cli-engine autocomplete setup
+CLI_ENGINE_AC_ZSH_SETUP_PATH=${cmd.config.cacheDir}/completions/zsh_setup && test -f $CLI_ENGINE_AC_ZSH_SETUP_PATH && source $CLI_ENGINE_AC_ZSH_SETUP_PATH;
+`)
+})
+
+runtest('outputs autocomplete script for .bashrc', async () => {
+  let cmd = await AutocompleteScript.mock('bash')
+  expect(cli.stdout.output).toMatch(`
+# cli-engine autocomplete setup
+CLI_ENGINE_AC_BASH_SETUP_PATH=${cmd.config.cacheDir}/completions/bash_setup && test -f $CLI_ENGINE_AC_BASH_SETUP_PATH && source $CLI_ENGINE_AC_BASH_SETUP_PATH;
+`)
+})
+
+runtest('errors on unsupported shell', async () => {
+  try {
+    await AutocompleteScript.mock('fish')
+  } catch (e) {
+    expect(cli.stderr.output).toMatch(` ▸    No autocomplete script for fish. Run $ cli-engine autocomplete for `)
+  }
 })
