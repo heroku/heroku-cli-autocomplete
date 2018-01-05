@@ -1,18 +1,18 @@
 // @flow
 
-import {AutocompleteBase} from './autocomplete'
+import { AutocompleteBase } from './autocomplete'
 import os from 'os'
 import path from 'path'
 
 // autocomplete will throw error on windows
-let runtest = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest : test
+let runtest = os.platform() === 'windows' || os.platform() === 'win32' ? xtest : test
 
 const cmd = new AutocompleteBase()
 
 describe('AutocompleteBase', () => {
   runtest('#errorIfWindows', async () => {
     try {
-      new AutocompleteBase({windows: true}).errorIfWindows()
+      new AutocompleteBase({ windows: true }).errorIfWindows()
     } catch (e) {
       expect(e).toMatch('Autocomplete is not currently supported in Windows')
     }

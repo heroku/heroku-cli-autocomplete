@@ -1,14 +1,14 @@
 // @flow
 
 import Options from './options'
-import {Command, flags} from 'cli-engine-heroku'
+import { Command, flags } from 'cli-engine-heroku'
 
 class TestCommand extends Command {
   static topic = 'foo'
   static command = 'bar'
   static description = 'baz'
   static flags = {
-    app: flags.app()
+    app: flags.app(),
   }
 }
 

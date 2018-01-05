@@ -2,7 +2,7 @@
 
 import AutocompleteCacheBuilder from './cache'
 import os from 'os'
-import {flags} from 'cli-engine-heroku'
+import { flags } from 'cli-engine-heroku'
 import path from 'path'
 
 const FooPlugin = require('../../../test/roots/foo-plugin')
@@ -11,13 +11,13 @@ const AC_PLUGIN_PATH = path.join(__dirname, '..', '..', '..')
 class CacheBuildFlagsTest extends AutocompleteCacheBuilder {
   static flags = {
     app: flags.app(),
-    visable: flags.boolean({description: 'Visable flag', char: 'v'}),
-    hidden: flags.boolean({description: 'Hidden flag', char: 'h', hidden: true})
+    visable: flags.boolean({ description: 'Visable flag', char: 'v' }),
+    hidden: flags.boolean({ description: 'Hidden flag', char: 'h', hidden: true }),
   }
 }
 
 // autocomplete will throw error on windows
-let runtest = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest : test
+let runtest = os.platform() === 'windows' || os.platform() === 'win32' ? xtest : test
 
 describe('AutocompleteCacheBuilder', () => {
   // Unit test private methods for extra coverage
@@ -33,7 +33,9 @@ describe('AutocompleteCacheBuilder', () => {
     })
 
     runtest('#_genCmdWithDescription', async () => {
-      expect(await cmd._genCmdWithDescription(AutocompleteCacheBuilder)).toBe(`"autocomplete\\:buildcache":"autocomplete cache builder"`)
+      expect(await cmd._genCmdWithDescription(AutocompleteCacheBuilder)).toBe(
+        `"autocomplete\\:buildcache":"autocomplete cache builder"`,
+      )
     })
 
     runtest('#_genCmdPublicFlags', async () => {

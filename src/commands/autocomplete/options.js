@@ -15,14 +15,14 @@ export default class AutocompleteOptions extends AutocompleteBase {
   static variableArgs = true
   static hidden = true
   static flags = {
-    app: Flags.app({required: false, hidden: true})
+    app: Flags.app({ required: false, hidden: true }),
   }
 
   beep: string = '\x07'
-  parsedArgs: {[name: string]: ?string} = {}
-  parsedFlags: {[name: string]: ?string} = {}
+  parsedArgs: { [name: string]: ?string } = {}
+  parsedFlags: { [name: string]: ?string } = {}
 
-  async run () {
+  async run() {
     // ex: heroku autocomplete:options 'heroku addons:destroy -a myapp myaddon'
     try {
       // A - grab cmd line to complete from argv
@@ -51,7 +51,7 @@ export default class AutocompleteOptions extends AutocompleteBase {
 
       if (cmdCurArgvIsFlag || cmdCurArgvIsFlagValue) {
         const argvFlag = cmdCurArgvIsFlagValue ? cmdPreviousArgv : cmdCurArgv
-        let {name, flag} = this._findFlagFromWildArg(argvFlag, Command)
+        let { name, flag } = this._findFlagFromWildArg(argvFlag, Command)
         if (!flag) throw new Error(`${argvFlag} is not a valid flag for ${cmdId}`)
         cacheKey = name || flag.name
         cacheCompletion = flag.completion
@@ -66,7 +66,7 @@ export default class AutocompleteOptions extends AutocompleteBase {
                 const heroku = new APIClient({ config: ctx.config })
                 let { body: configs } = await heroku.get(`/apps/${this.flags.app}/config-vars`)
                 return Object.keys(configs)
-              }
+              },
             }
           } else {
             throw new Error(`No app found for config completion (cmdId: ${cmdId})`)
@@ -86,14 +86,14 @@ export default class AutocompleteOptions extends AutocompleteBase {
       // build/retrieve & return options cache
       if (cacheCompletion && cacheCompletion.options) {
         // use cacheKey function or fallback to arg/flag name
-        const ctx = {args: this.parsedArgs, flags: this.parsedFlags, argv: this.argv, config: this.config}
+        const ctx = { args: this.parsedArgs, flags: this.parsedFlags, argv: this.argv, config: this.config }
         const ckey = cacheCompletion.cacheKey ? await cacheCompletion.cacheKey(ctx) : null
-        const key: string = (ckey || cacheKey || 'unknown_key_error')
+        const key: string = ckey || cacheKey || 'unknown_key_error'
         const flagCachePath = path.join(this.completionsCachePath, key)
 
         // build/retrieve cache
         const duration = cacheCompletion.cacheDuration || 60 * 60 * 24 // 1 day
-        const opts = {cacheFn: () => cacheCompletion.options(ctx)}
+        const opts = { cacheFn: () => cacheCompletion.options(ctx) }
         const options = await ACCache.fetch(flagCachePath, duration, opts)
 
         // return options cache
@@ -108,20 +108,20 @@ export default class AutocompleteOptions extends AutocompleteBase {
   }
 
   // TO-DO: create a return type
-  _findFlagFromWildArg (wild: string, Command: Class<Command<*>>): Object {
+  _findFlagFromWildArg(wild: string, Command: Class<Command<*>>): Object {
     let name = wild.replace(/^-+/, '')
     name = name.replace(/=(.+)?$/, '')
 
     let flag = Command.flags[name]
-    if (flag) return {name, flag}
+    if (flag) return { name, flag }
 
     name = Object.keys(Command.flags).find(k => Command.flags[k].char === name)
     flag = Command.flags[name]
-    if (flag) return {name, flag}
+    if (flag) return { name, flag }
     return {}
   }
 
-  _determineCmdState (argv: Array<string>, Command: Class<Command<*>>): [boolean, boolean] {
+  _determineCmdState(argv: Array<string>, Command: Class<Command<*>>): [boolean, boolean] {
     let needFlagValueSatisfied = false
     let argIsFlag = false
     let argIsFlagValue = false
@@ -131,7 +131,8 @@ export default class AutocompleteOptions extends AutocompleteBase {
     // that are not flags or flag values
 
     // for now, suspending arg completion
-    argv.filter(wild => { // const nthArg = argv.filter(wild => {
+    argv.filter(wild => {
+      // const nthArg = argv.filter(wild => {
       if (wild.match(/^-(-)?/)) {
         // we're a flag
         argIsFlag = true
@@ -139,7 +140,7 @@ export default class AutocompleteOptions extends AutocompleteBase {
         // ignore me
         const wildSplit = wild.split('=')
         const key = wildSplit.length === 1 ? wild : wildSplit[0]
-        const {name, flag} = this._findFlagFromWildArg(key, Command)
+        const { name, flag } = this._findFlagFromWildArg(key, Command)
         flagName = name
         // end ignore me
 

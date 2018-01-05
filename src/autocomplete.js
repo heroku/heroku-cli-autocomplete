@@ -6,21 +6,21 @@ import moment from 'moment'
 import cli from 'cli-ux'
 
 export class AutocompleteBase extends Command<*> {
-  errorIfWindows () {
+  errorIfWindows() {
     if (this.config.windows) {
       this.out.error('Autocomplete is not currently supported in Windows')
     }
   }
 
-  get completionsCachePath (): string {
+  get completionsCachePath(): string {
     return path.join(this.config.cacheDir, 'completions')
   }
 
-  get acLogfile (): string {
+  get acLogfile(): string {
     return path.join(this.config.cacheDir, 'autocomplete.log')
   }
 
-  writeLogFile (msg: string) {
+  writeLogFile(msg: string) {
     cli.stdout.constructor.logToFile(`[${moment().format()}] ${msg}\n`, this.acLogfile)
   }
 }

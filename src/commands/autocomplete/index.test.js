@@ -5,7 +5,7 @@ import os from 'os'
 import cli from 'cli-ux'
 
 // autocomplete will throw error on windows
-let runtest = (os.platform() === 'windows' || os.platform() === 'win32') ? xtest : test
+let runtest = os.platform() === 'windows' || os.platform() === 'win32' ? xtest : test
 
 cli.config.mock = true
 

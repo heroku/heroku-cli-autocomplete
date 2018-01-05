@@ -2,12 +2,12 @@
 
 // Copied from heroku-cli (previously in cli-engine)
 // Don't add heroku-cli as a dependency
-import {type Arg, type Flag} from 'cli-engine-config'
-import {Command, flags as Flags} from 'cli-engine-heroku'
+import { type Arg, type Flag } from 'cli-engine-config'
+import { Command, flags as Flags } from 'cli-engine-heroku'
 import vars from 'cli-engine-heroku/lib/vars'
 
 type LegacyContext = {
-  supportsColor: boolean
+  supportsColor: boolean,
 }
 
 type LegacyFlag = {
@@ -19,7 +19,7 @@ type LegacyFlag = {
   required?: boolean,
   optional?: boolean,
   parse?: any,
-  completion?: any
+  completion?: any,
 }
 
 type LegacyCommand = {
@@ -37,10 +37,10 @@ type LegacyCommand = {
   needsOrg?: ?boolean,
   hidden?: ?boolean,
   default?: ?boolean,
-  run: (ctx: LegacyContext) => Promise<any>
+  run: (ctx: LegacyContext) => Promise<any>,
 }
 
-export function convertFromV5 (c: LegacyCommand) {
+export function convertFromV5(c: LegacyCommand) {
   class V5 extends Command {
     static topic = c.topic
     static command = c.command
@@ -53,9 +53,9 @@ export function convertFromV5 (c: LegacyCommand) {
     static usage = c.usage
     static aliases = c.aliases || []
 
-    run () {
+    run() {
       let flags: any = this.flags
-      let args: (string[] | {[k: string]: string}) = this.argv
+      let args: string[] | { [k: string]: string } = this.argv
       if (!c.variableArgs) {
         // turn args into object v5 expects
         args = {}
@@ -81,7 +81,7 @@ export function convertFromV5 (c: LegacyCommand) {
         apiHost: vars.apiHost,
         gitHost: vars.gitHost,
         httpGitHost: vars.httpGitHost,
-        cwd: process.cwd()
+        cwd: process.cwd(),
       }
       ctx.auth.password = ctx.apiToken
       const ansi = require('ansi-escapes')
@@ -95,17 +95,17 @@ export function convertFromV5 (c: LegacyCommand) {
   }
 
   if (c.needsApp || c.wantsApp) {
-    V5.flags.app = Flags.app({required: !!c.needsApp})
+    V5.flags.app = Flags.app({ required: !!c.needsApp })
     V5.flags.remote = Flags.remote()
   }
   if (c.needsOrg || c.wantsOrg) {
-    let opts = {required: !!c.needsOrg, hidden: false, description: 'organization to use'}
+    let opts = { required: !!c.needsOrg, hidden: false, description: 'organization to use' }
     V5.flags.org = Flags.org(opts)
   }
   return V5
 }
 
-function convertFlagsFromV5 (flags: ?(LegacyFlag[] | {[name: string]: Flag})): {[name: string]: any} {
+function convertFlagsFromV5(flags: ?(LegacyFlag[] | { [name: string]: Flag })): { [name: string]: any } {
   if (!flags) return {}
   if (!Array.isArray(flags)) return flags
   return flags.reduce((flags, flag) => {
@@ -116,7 +116,7 @@ function convertFlagsFromV5 (flags: ?(LegacyFlag[] | {[name: string]: Flag})): {
       required: flag.required,
       optional: flag.optional,
       parse: flag.parse,
-      completion: flag.completion
+      completion: flag.completion,
     }
     Object.keys(opts).forEach(k => opts[k] === undefined && delete opts[k])
     flags[flag.name] = flag.hasValue ? Flags.string(opts) : Flags.boolean((opts: any))

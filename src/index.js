@@ -8,11 +8,11 @@ export const topics = [
     name: 'autocomplete',
     description: 'manage cli autocompletion',
     // hide until public release
-    hidden: true
-  }
+    hidden: true,
+  },
 ]
 
-export const commands = klaw(path.join(__dirname, 'commands'), {nodir: true})
+export const commands = klaw(path.join(__dirname, 'commands'), { nodir: true })
   .filter(f => f.path.endsWith('.js'))
   .filter(f => !f.path.endsWith('.test.js'))
   .filter(f => f.path !== __filename)

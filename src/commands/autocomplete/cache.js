@@ -4,15 +4,15 @@ import path from 'path'
 import Command from 'cli-engine-command'
 import fs from 'fs-extra'
 import Plugins from 'cli-engine/lib/plugins'
-import {convertFromV5} from '../../legacy'
-import {AutocompleteBase} from '../../autocomplete'
+import { convertFromV5 } from '../../legacy'
+import { AutocompleteBase } from '../../autocomplete'
 
 const debug = require('debug')('cli-autocomplete:buildcache')
 
 type CacheStrings = {
   cmdsWithFlags: string,
   cmdFlagsSetters: string,
-  cmdsWithDescSetter: string
+  cmdsWithDescSetter: string,
 }
 
 export default class AutocompleteCacheBuilder extends AutocompleteBase {
@@ -25,11 +25,11 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
 
   plugins: Array<Plugins> = []
 
-  async run () {
+  async run() {
     await this.createCaches()
   }
 
-  async createCaches () {
+  async createCaches() {
     if (this.config.mock) return
     await this.hydratePlugins()
     // 1. ensure completions cache dir
@@ -47,19 +47,21 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
     await fs.writeFile(path.join(this.completionsCachePath, 'zsh_setup'), zshSetup)
   }
 
-  get skipEllipsis (): boolean {
+  get skipEllipsis(): boolean {
     return process.env.CLI_ENGINE_AC_ZSH_SKIP_ELLIPSIS === '1'
   }
 
-  async hydratePlugins () {
+  async hydratePlugins() {
     const plugins = await new Plugins(this.config).list()
-    this.plugins = await Promise.all(plugins.map(async (p) => {
-      const hydrated = await p.pluginPath.require()
-      return hydrated
-    }))
+    this.plugins = await Promise.all(
+      plugins.map(async p => {
+        const hydrated = await p.pluginPath.require()
+        return hydrated
+      }),
+    )
   }
 
-  _genCmdsCacheStrings (): CacheStrings {
+  _genCmdsCacheStrings(): CacheStrings {
     // bash
     let cmdsWithFlags = []
     // zsh
@@ -85,24 +87,27 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
     return {
       cmdsWithFlags: cmdsWithFlags.join('\n'),
       cmdFlagsSetters: cmdFlagsSetters.join('\n'),
-      cmdsWithDescSetter: this._genZshAllCmdsListSetter(cmdsWithDesc)
+      cmdsWithDescSetter: this._genZshAllCmdsListSetter(cmdsWithDesc),
     }
   }
 
-  _genCmdID (Command: Class<Command<*>>): string {
+  _genCmdID(Command: Class<Command<*>>): string {
     return Command.command ? `${Command.topic}:${Command.command}` : Command.topic
   }
 
-  _genCmdPublicFlags (Command: Class<Command<*>>): string {
-    return Object.keys(Command.flags || {}).filter(flag => !Command.flags[flag].hidden).map(flag => `--${flag}`).join(' ')
+  _genCmdPublicFlags(Command: Class<Command<*>>): string {
+    return Object.keys(Command.flags || {})
+      .filter(flag => !Command.flags[flag].hidden)
+      .map(flag => `--${flag}`)
+      .join(' ')
   }
 
-  _genCmdWithDescription (Command: Class<Command<*>>): string {
+  _genCmdWithDescription(Command: Class<Command<*>>): string {
     const description = Command.description ? `:"${Command.description}"` : ''
     return `"${this._genCmdID(Command).replace(/:/g, '\\:')}"${description}`
   }
 
-  _genZshCmdFlagsSetter (Command: Class<Command<*>>): string {
+  _genZshCmdFlagsSetter(Command: Class<Command<*>>): string {
     const id = this._genCmdID(Command)
     const flagscompletions = Object.keys(Command.flags || {})
       .filter(flag => !Command.flags[flag].hidden)
@@ -130,7 +135,7 @@ ${flagscompletions}
     return `# no flags for ${id}`
   }
 
-  _genZshAllCmdsListSetter (cmdsWithDesc: Array<string>): string {
+  _genZshAllCmdsListSetter(cmdsWithDesc: Array<string>): string {
     return `
 _set_all_commands_list () {
 _all_commands_list=(
@@ -140,8 +145,11 @@ ${cmdsWithDesc.join('\n')}
 `
   }
 
-  _genShellSetups (skipEllipsis: boolean = false): Array<string> {
-    const envAnalyticsDir = `CLI_ENGINE_AC_ANALYTICS_DIR=${path.join(this.completionsCachePath, 'completion_analytics')};`
+  _genShellSetups(skipEllipsis: boolean = false): Array<string> {
+    const envAnalyticsDir = `CLI_ENGINE_AC_ANALYTICS_DIR=${path.join(
+      this.completionsCachePath,
+      'completion_analytics',
+    )};`
     const envCommandsPath = `CLI_ENGINE_AC_COMMANDS_PATH=${path.join(this.completionsCachePath, 'commands')};`
     const zshSetup = `${skipEllipsis ? '' : this._genCompletionDotsFunc()}
 ${envAnalyticsDir}
@@ -156,12 +164,20 @@ compinit;
 `
     const bashSetup = `${envAnalyticsDir}
 ${envCommandsPath}
-CLI_ENGINE_AC_BASH_COMPFUNC_PATH=${path.join(__dirname, '..', '..', '..', 'autocomplete', 'bash', 'cli_engine.bash')} && test -f $CLI_ENGINE_AC_BASH_COMPFUNC_PATH && source $CLI_ENGINE_AC_BASH_COMPFUNC_PATH;
+CLI_ENGINE_AC_BASH_COMPFUNC_PATH=${path.join(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      'autocomplete',
+      'bash',
+      'cli_engine.bash',
+    )} && test -f $CLI_ENGINE_AC_BASH_COMPFUNC_PATH && source $CLI_ENGINE_AC_BASH_COMPFUNC_PATH;
 `
     return [bashSetup, zshSetup]
   }
 
-  _genCompletionDotsFunc (): string {
+  _genCompletionDotsFunc(): string {
     return `expand-or-complete-with-dots() {
   echo -n "..."
   zle expand-or-complete
