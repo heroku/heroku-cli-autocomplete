@@ -5,7 +5,7 @@
 import fs from 'fs-extra'
 import moment from 'moment'
 
-type Options = {
+interface Options {
   cacheFn: () => Promise<Array<string>>,
 }
 

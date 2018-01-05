@@ -1,9 +1,10 @@
 // @flow
 
-import AutocompleteCacheBuilder from './cache'
-import os from 'os'
 import { flags } from 'cli-engine-heroku'
+import os from 'os'
 import path from 'path'
+
+import AutocompleteCacheBuilder from './cache'
 
 const FooPlugin = require('../../../test/roots/foo-plugin')
 const AC_PLUGIN_PATH = path.join(__dirname, '..', '..', '..')

@@ -2,15 +2,15 @@
 
 // Copied from heroku-cli (previously in cli-engine)
 // Don't add heroku-cli as a dependency
-import { type Arg, type Flag } from 'cli-engine-config'
+import { Arg Flag, type type } from 'cli-engine-config'
 import { Command, flags as Flags } from 'cli-engine-heroku'
 import vars from 'cli-engine-heroku/lib/vars'
 
-type LegacyContext = {
+interface LegacyContext {
   supportsColor: boolean,
 }
 
-type LegacyFlag = {
+interface LegacyFlag {
   name: string,
   description?: string,
   char?: string,
@@ -22,7 +22,7 @@ type LegacyFlag = {
   completion?: any,
 }
 
-type LegacyCommand = {
+interface LegacyCommand {
   topic: string,
   command?: string,
   aliases?: string[],

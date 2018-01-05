@@ -1,15 +1,16 @@
 // @flow
 
-import path from 'path'
 import Command from 'cli-engine-command'
-import fs from 'fs-extra'
 import Plugins from 'cli-engine/lib/plugins'
-import { convertFromV5 } from '../../legacy'
+import fs from 'fs-extra'
+import path from 'path'
+
 import { AutocompleteBase } from '../../autocomplete'
+import { convertFromV5 } from '../../legacy'
 
 const debug = require('debug')('cli-autocomplete:buildcache')
 
-type CacheStrings = {
+interface CacheStrings {
   cmdsWithFlags: string,
   cmdFlagsSetters: string,
   cmdsWithDescSetter: string,

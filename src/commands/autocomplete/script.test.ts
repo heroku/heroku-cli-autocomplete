@@ -1,8 +1,9 @@
 // @flow
 
-import AutocompleteScript from './script'
-import os from 'os'
 import cli from 'cli-ux'
+import os from 'os'
+
+import AutocompleteScript from './script'
 
 // autocomplete will throw error on windows
 let runtest = os.platform() === 'windows' || os.platform() === 'win32' ? xtest : test

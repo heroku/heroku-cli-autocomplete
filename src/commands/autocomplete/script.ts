@@ -1,8 +1,9 @@
 // @flow
 
-import path from 'path'
-import { AutocompleteBase } from '../../autocomplete'
 import cli from 'cli-ux'
+import path from 'path'
+
+import { AutocompleteBase } from '../../autocomplete'
 
 export default class AutocompleteScript extends AutocompleteBase {
   static topic = 'autocomplete'

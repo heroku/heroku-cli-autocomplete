@@ -1,8 +1,9 @@
 // @flow
 
-import { AutocompleteBase } from './autocomplete'
 import os from 'os'
 import path from 'path'
+
+import { AutocompleteBase } from './autocomplete'
 
 // autocomplete will throw error on windows
 let runtest = os.platform() === 'windows' || os.platform() === 'win32' ? xtest : test

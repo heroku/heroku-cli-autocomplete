@@ -1,9 +1,9 @@
 // @flow
 
 import Command from 'cli-engine-command'
-import path from 'path'
-import moment from 'moment'
 import cli from 'cli-ux'
+import moment from 'moment'
+import path from 'path'
 
 export class AutocompleteBase extends Command<*> {
   errorIfWindows() {

@@ -1,12 +1,13 @@
 // @flow
 
 import type Command from 'cli-engine-command'
-import Plugins from 'cli-engine/lib/plugins'
 import { APIClient, flags as Flags } from 'cli-engine-heroku'
-import path from 'path'
-import ACCache from '../../cache'
-import { AutocompleteBase } from '../../autocomplete'
+import Plugins from 'cli-engine/lib/plugins'
 import cli from 'cli-ux'
+import path from 'path'
+
+import { AutocompleteBase } from '../../autocomplete'
+import ACCache from '../../cache'
 
 export default class AutocompleteOptions extends AutocompleteBase {
   static topic = 'autocomplete'

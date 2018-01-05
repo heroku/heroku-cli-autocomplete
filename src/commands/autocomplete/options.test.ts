@@ -1,7 +1,8 @@
 // @flow
 
-import Options from './options'
 import { Command, flags } from 'cli-engine-heroku'
+
+import Options from './options'
 
 class TestCommand extends Command {
   static topic = 'foo'
@@ -20,14 +21,14 @@ describe('AutocompleteOptions', () => {
 
   describe('#_findFlagFromWildArg', () => {
     test('finds flag from long and short name', () => {
-      var output = cmd._findFlagFromWildArg('--app=my-app', TestCommand)
+      let output = cmd._findFlagFromWildArg('--app=my-app', TestCommand)
       expect(output.name).toEqual('app')
       output = cmd._findFlagFromWildArg('-a', TestCommand)
       expect(output.name).toEqual('app')
     })
 
     test('returns empty', () => {
-      var output = cmd._findFlagFromWildArg('--', TestCommand)
+      let output = cmd._findFlagFromWildArg('--', TestCommand)
       expect(output).not.toHaveProperty('output.name')
       output = cmd._findFlagFromWildArg('', TestCommand)
       expect(output).not.toHaveProperty('output.name')

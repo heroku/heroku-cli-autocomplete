@@ -1,8 +1,10 @@
 // @flow
 
-import { AutocompleteBase } from '../../autocomplete'
-import cli from 'cli-ux'
 import { flags } from 'cli-engine-heroku'
+import cli from 'cli-ux'
+
+import { AutocompleteBase } from '../../autocomplete'
+
 import AutocompleteCacheBuilder from './cache'
 
 export default class Autocomplete extends AutocompleteBase {
