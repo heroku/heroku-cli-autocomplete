@@ -3,7 +3,7 @@
 // import Command from '@cli-engine/engine'
 import { ICommand } from '@cli-engine/config'
 import { Config } from '@cli-engine/engine/lib/config'
-import { PluginLegacy } from '@cli-engine/engine/lib/plugins/legacy'
+import { PluginLegacy } from '../../legacy'
 import { cli } from 'cli-ux'
 import * as fs from 'fs-extra'
 import * as path from 'path'
