@@ -69,7 +69,7 @@ ${cli.color.cyan(`$ ${bin} apps:info --app=${tabStr}`)}
     }
 
     cli.action.start(`${cli.color.bold('Building autocomplete cache')}`)
-    await AutocompleteCacheBuilder.run([this.argv[0], 'autocomplete:cache'], this.config)
+    await AutocompleteCacheBuilder.run([], this.config)
     cli.action.stop()
 
     cli.log('\nEnjoy!')

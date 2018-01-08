@@ -93,30 +93,7 @@ export class PluginLegacy {
     return m as IPluginModule
   }
 
-  private convertCommands(c: AnyCommand[]): ICommand[] {
-    return c.map(c => this.convertCommand(c))
-  }
-
-  private convertCommand(c: AnyCommand): ICommand {
-    if (this.isICommand(c)) return this.convertFromICommand(c)
-    if (this.isV5Command(c)) return this.convertFromV5(c)
-    if (this.isFlowCommand(c)) return this.convertFromFlow(c)
-    debug(c)
-    throw new Error(`Invalid command: ${inspect(c)}`)
-  }
-
-  private convertFromICommand(c: any): ICommand {
-    if (!c.id) c.id = _.compact([c.topic, c.command]).join(':')
-    return c
-  }
-
-  private convertFromFlow(c: any): ICommand {
-    if (!c.id) c.id = _.compact([c.topic, c.command]).join(':')
-    c._version = c._version || '0.0.0'
-    return c
-  }
-
-  private convertFromV5(c: IV5Command): ICommand {
+  public convertFromV5(c: IV5Command): ICommand {
     class V5 extends deps.Heroku.Command {
       static id = _.compact([c.topic, c.command]).join(':')
       static description = c.description
@@ -172,6 +149,29 @@ export class PluginLegacy {
       V5.flags.org = deps.Heroku.flags.org(opts)
     }
     return V5
+  }
+
+  private convertCommands(c: AnyCommand[]): ICommand[] {
+    return c.map(c => this.convertCommand(c))
+  }
+
+  private convertCommand(c: AnyCommand): ICommand {
+    if (this.isICommand(c)) return this.convertFromICommand(c)
+    if (this.isV5Command(c)) return this.convertFromV5(c)
+    if (this.isFlowCommand(c)) return this.convertFromFlow(c)
+    debug(c)
+    throw new Error(`Invalid command: ${inspect(c)}`)
+  }
+
+  private convertFromICommand(c: any): ICommand {
+    if (!c.id) c.id = _.compact([c.topic, c.command]).join(':')
+    return c
+  }
+
+  private convertFromFlow(c: any): ICommand {
+    if (!c.id) c.id = _.compact([c.topic, c.command]).join(':')
+    c._version = c._version || '0.0.0'
+    return c
   }
 
   private isICommand(command: AnyCommand): command is ICommand {

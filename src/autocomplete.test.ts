@@ -17,9 +17,10 @@ const cmd = new AutocompleteTest(new Config())
 describe('AutocompleteBase', () => {
   runtest('#errorIfWindows', async () => {
     try {
-      new AutocompleteTest(new Config({ platform: 'win32' })).errorIfWindows()
+      let config = new Config({platform: 'win32'})
+      new AutocompleteTest(config).errorIfWindows()
     } catch (e) {
-      expect(e).toMatch('Autocomplete is not currently supported in Windows')
+      expect(e.message).toMatch('Autocomplete is not currently supported in Windows')
     }
   })
 

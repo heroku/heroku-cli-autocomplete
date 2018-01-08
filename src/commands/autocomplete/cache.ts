@@ -4,7 +4,6 @@
 import { ICommand } from '@cli-engine/config'
 import { Config } from '@cli-engine/engine/lib/config'
 import { PluginLegacy } from '@cli-engine/engine/lib/plugins/legacy'
-import { Plugin } from '@cli-engine/engine/lib/plugins/plugin'
 import { cli } from 'cli-ux'
 import * as fs from 'fs-extra'
 import * as path from 'path'
@@ -27,7 +26,7 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
   static hidden = true
   static aliases = ['autocomplete:init']
 
-  plugins: Plugin[] = []
+  plugins: {topics: any, commands: any}[] = []
 
   async run() {
     await this.createCaches()
@@ -75,18 +74,18 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
     const Legacy = new PluginLegacy(this.config)
     await Promise.all(
       this.plugins.map(async p => {
-        let plgs = (await p.load()).commands || []
+        let plgs = p.commands || []
         return plgs.map((c: any) => {
           try {
             if (c.hidden || !c.topic) return
-            const Command = typeof c === 'function' ? c : Legacy.convert(c)
+            const Command = typeof c === 'function' ? c : Legacy.convertFromV5(c)
             const id = this._genCmdID(Command)
             const publicFlags = this._genCmdPublicFlags(Command)
             cmdsWithFlags.push(`${id} ${publicFlags}`.trim())
             cmdFlagsSetters.push(this._genZshCmdFlagsSetter(Command))
             cmdsWithDesc.push(this._genCmdWithDescription(Command))
           } catch (err) {
-            debug(`Error creating autocomplete a command in ${p.name}, moving on...`)
+            debug(`Error creating autocomplete for command in ${this._genCmdID(c)}, moving on...`)
             debug(err.message)
             this.writeLogFile(err.message)
           }
@@ -100,8 +99,9 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
     }
   }
 
-  _genCmdID(Kommand: ICommand): string {
-    let id = Kommand.command ? `${Kommand.topic}:${Kommand.command}` : Kommand.topic
+  _genCmdID(Command: ICommand): string {
+    if (Command.id) return Command.id
+    let id = Command.command ? `${Command.topic}:${Command.command}` : Command.topic
     return id || 'undefinedcommand'
   }
 

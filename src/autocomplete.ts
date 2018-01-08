@@ -1,7 +1,6 @@
 // @flow
 
 import Command from '@heroku-cli/command'
-import { cli } from 'cli-ux'
 import StreamOutput from 'cli-ux/lib/stream'
 import * as moment from 'moment'
 import * as path from 'path'
@@ -9,7 +8,7 @@ import * as path from 'path'
 export abstract class AutocompleteBase extends Command {
   public errorIfWindows() {
     if (this.config.windows) {
-      cli.error('Autocomplete is not currently supported in Windows')
+      throw new Error('Autocomplete is not currently supported in Windows')
     }
   }
 
