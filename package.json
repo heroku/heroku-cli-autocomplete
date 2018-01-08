@@ -11,9 +11,9 @@
   "license": "ISC",
   "main": "lib/index.js",
   "scripts": {
-    "posttest": "cli-engine-util",
-    "precommit": "cli-engine-util",
-    "prepare": "cli-engine-util",
+    "posttest": "./node_modules/.bin/cli-engine-util",
+    "precommit": "./node_modules/.bin/cli-engine-util",
+    "prepare": "./node_modules/.bin/cli-engine-util",
     "pretest": "tsc",
     "test": "jest",
     "release": "np"
@@ -28,6 +28,7 @@
     "tslib": "^1.8.1"
   },
   "devDependencies": {
+    "@cli-engine/util": "^1.1.5",
     "@heroku-cli/tslint": "^1.1.2",
     "@types/ansi-styles": "^2.0.30",
     "@types/es6-shim": "^0.31.35",

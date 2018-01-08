@@ -18,9 +18,21 @@
     chalk "^2.3.0"
     cli-flags "^2.0.6"
 
+"@cli-engine/command@^12.1.0":
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/@cli-engine/command/-/command-12.1.0.tgz#86300ad3c7f51b1c539f9c7b998204f52016e0a7"
+  dependencies:
+    "@cli-engine/screen" "^0.0.0"
+    chalk "^2.3.0"
+    cli-flags "^2.0.7"
+
 "@cli-engine/config@^5.0.11":
   version "5.0.11"
   resolved "https://registry.yarnpkg.com/@cli-engine/config/-/config-5.0.11.tgz#b3b1393da09469fbcaaa99329064e775e275de24"
+
+"@cli-engine/config@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@cli-engine/config/-/config-5.1.0.tgz#d8ac7122317bc505dc09e7fd778777602d6b7568"
 
 "@cli-engine/engine@^6.1.27":
   version "6.1.27"
@@ -45,11 +57,54 @@
     ts-lodash "4.0.9"
     yarn "^1.3.2"
 
+"@cli-engine/engine@^6.1.30":
+  version "6.1.30"
+  resolved "https://registry.yarnpkg.com/@cli-engine/engine/-/engine-6.1.30.tgz#0a3f15bb6a68d3fe191dd42dba1ec8c4c86a6ecd"
+  dependencies:
+    "@heroku-cli/color" "^1.1.1"
+    assync "^1.0.4"
+    cli-ux "^2.0.21"
+    cross-spawn "^5.1.0"
+    debug "^3.1.0"
+    filesize "^3.5.11"
+    fs-extra "^5.0.0"
+    globby "^7.1.1"
+    graceful-fs "^4.1.11"
+    http-call "^4.0.8"
+    klaw "^2.1.1"
+    log-chopper "^1.0.2"
+    moment "^2.20.1"
+    rwlockfile "^2.0.17"
+    semver "5.4.1"
+    string-similarity "^1.2.0"
+    strip-ansi "4.0.0"
+    ts-lodash "4.0.9"
+    yarn "^1.3.2"
+
 "@cli-engine/screen@^0.0.0":
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/@cli-engine/screen/-/screen-0.0.0.tgz#c2e847c7d4d998490c9097282bf21637d5162116"
 
-"@heroku-cli/color@^1.0.4":
+"@cli-engine/util@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@cli-engine/util/-/util-1.1.5.tgz#6bb79740d00bc234446a87cae371b2cede3bd0c3"
+  dependencies:
+    "@cli-engine/command" "^12.1.0"
+    "@cli-engine/config" "^5.1.0"
+    "@cli-engine/engine" "^6.1.30"
+    "@heroku-cli/color" "^1.1.1"
+    cli-ux "^2.0.21"
+    cross-spawn "^5.1.0"
+    del "^3.0.0"
+    execa "^0.8.0"
+    fs-extra "^5.0.0"
+    handlebars "^4.0.11"
+    jest-diff "^22.0.3"
+    read-pkg-up "^3.0.0"
+    ts-lodash "^4.0.10"
+    tslib "^1.8.1"
+
+"@heroku-cli/color@^1.0.4", "@heroku-cli/color@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@heroku-cli/color/-/color-1.1.1.tgz#a2c25239ff1196733a79cabc7a750cd46b96dc30"
   dependencies:
@@ -742,7 +797,7 @@ cli-cursor@^2.1.0:
   dependencies:
     restore-cursor "^2.0.0"
 
-cli-flags@^2.0.6:
+cli-flags@^2.0.6, cli-flags@^2.0.7:
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/cli-flags/-/cli-flags-2.0.7.tgz#215b3f8d911142c3e4833eaf7f2f96ab97fd22cf"
   dependencies:
@@ -1014,6 +1069,13 @@ detect-newline@^2.1.0:
 diff@^3.2.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.3.0.tgz#056695150d7aa93237ca7e378ac3b1682b7963b9"
+
+dir-glob@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/dir-glob/-/dir-glob-2.0.0.tgz#0b205d2b6aef98238ca286598a8204d29d0a0034"
+  dependencies:
+    arrify "^1.0.1"
+    path-type "^3.0.0"
 
 domexception@^1.0.0:
   version "1.0.0"
@@ -1417,6 +1479,17 @@ globby@^6.1.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
+globby@^7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/globby/-/globby-7.1.1.tgz#fb2ccff9401f8600945dfada97440cca972b8680"
+  dependencies:
+    array-union "^1.0.1"
+    dir-glob "^2.0.0"
+    glob "^7.1.2"
+    ignore "^3.3.5"
+    pify "^3.0.0"
+    slash "^1.0.0"
+
 got@^6.7.1:
   version "6.7.1"
   resolved "https://registry.yarnpkg.com/got/-/got-6.7.1.tgz#240cd05785a9a18e561dc1b44b41c763ef1e8db0"
@@ -1440,6 +1513,16 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9:
 growly@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
+
+handlebars@^4.0.11:
+  version "4.0.11"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.11.tgz#630a35dfe0294bc281edae6ffc5d329fc7982dcc"
+  dependencies:
+    async "^1.4.0"
+    optimist "^0.6.1"
+    source-map "^0.4.4"
+  optionalDependencies:
+    uglify-js "^2.6"
 
 handlebars@^4.0.3:
   version "4.0.10"
@@ -1562,6 +1645,17 @@ http-call@^4.0.6:
     tslib "^1.8.1"
     tunnel-agent "^0.6.0"
 
+http-call@^4.0.8:
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/http-call/-/http-call-4.0.8.tgz#fd0207764958a3f1238bb3344ff912b32ddfa64a"
+  dependencies:
+    content-type "^1.0.4"
+    debug "^3.1.0"
+    is-retry-allowed "^1.1.0"
+    is-stream "^1.1.0"
+    tslib "^1.8.1"
+    tunnel-agent "^0.6.0"
+
 http-signature@~1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/http-signature/-/http-signature-1.1.1.tgz#df72e267066cd0ac67fb76adf8e134a8fbcf91bf"
@@ -1593,6 +1687,10 @@ iconv-lite@0.4.13:
 iconv-lite@^0.4.17:
   version "0.4.18"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.18.tgz#23d8656b16aae6742ac29732ea8f0336a4789cf2"
+
+ignore@^3.3.5:
+  version "3.3.7"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.7.tgz#612289bfb3c220e186a58118618d5be8c1bab021"
 
 import-lazy@^2.1.0:
   version "2.1.0"
@@ -3714,6 +3812,12 @@ ts-jest@^22.0.0:
 ts-lodash@4.0.9, ts-lodash@^4.0.8:
   version "4.0.9"
   resolved "https://registry.yarnpkg.com/ts-lodash/-/ts-lodash-4.0.9.tgz#088d7ceefbf36c8c4bcdf28372249015ccafd429"
+  dependencies:
+    lodash "^4.17.4"
+
+ts-lodash@^4.0.10:
+  version "4.0.11"
+  resolved "https://registry.yarnpkg.com/ts-lodash/-/ts-lodash-4.0.11.tgz#f668e2ad4b6cb3bcbeceb894cf0a8cde48b3cd85"
   dependencies:
     lodash "^4.17.4"
 
