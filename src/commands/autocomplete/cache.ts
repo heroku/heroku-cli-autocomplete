@@ -1,19 +1,22 @@
 // @flow
 
-import Command from 'cli-engine-command'
-import Plugins from 'cli-engine/lib/plugins'
-import fs from 'fs-extra'
-import path from 'path'
+// import Command from '@cli-engine/engine'
+import { ICommand } from '@cli-engine/config'
+import { Config } from '@cli-engine/engine/lib/config'
+import { PluginLegacy } from '@cli-engine/engine/lib/plugins/legacy'
+import { Plugin } from '@cli-engine/engine/lib/plugins/plugin'
+import { cli } from 'cli-ux'
+import * as fs from 'fs-extra'
+import * as path from 'path'
 
 import { AutocompleteBase } from '../../autocomplete'
-import { convertFromV5 } from '../../legacy'
 
 const debug = require('debug')('cli-autocomplete:buildcache')
 
 interface CacheStrings {
-  cmdsWithFlags: string,
-  cmdFlagsSetters: string,
-  cmdsWithDescSetter: string,
+  cmdsWithFlags: string
+  cmdFlagsSetters: string
+  cmdsWithDescSetter: string
 }
 
 export default class AutocompleteCacheBuilder extends AutocompleteBase {
@@ -24,19 +27,19 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
   static hidden = true
   static aliases = ['autocomplete:init']
 
-  plugins: Array<Plugins> = []
+  plugins: Plugin[] = []
 
   async run() {
     await this.createCaches()
   }
 
   async createCaches() {
-    if (this.config.mock) return
+    if (cli.config.mock) return
     await this.hydratePlugins()
     // 1. ensure completions cache dir
     await fs.ensureDir(this.completionsCachePath)
     // 2. create commands cache strings
-    const cacheStrings = this._genCmdsCacheStrings()
+    const cacheStrings = await this._genCmdsCacheStrings()
     // 3. save bash commands with flags list
     await fs.writeFile(path.join(this.completionsCachePath, 'commands'), cacheStrings.cmdsWithFlags)
     // 4. save zsh command with descriptions list & command-flags setters
@@ -53,38 +56,43 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
   }
 
   async hydratePlugins() {
-    const plugins = await new Plugins(this.config).list()
+    const config = new Config(this.config)
+    const plugins = await config.plugins.list()
     this.plugins = await Promise.all(
-      plugins.map(async p => {
+      plugins.map(async (p: any) => {
         const hydrated = await p.pluginPath.require()
         return hydrated
       }),
     )
   }
 
-  _genCmdsCacheStrings(): CacheStrings {
+  async _genCmdsCacheStrings(): Promise<CacheStrings> {
     // bash
-    let cmdsWithFlags = []
+    let cmdsWithFlags: string[] = []
     // zsh
-    let cmdFlagsSetters = []
-    let cmdsWithDesc = []
-    this.plugins.map(p => {
-      return (p.commands || []).map(c => {
-        try {
-          if (c.hidden || !c.topic) return
-          const Command = typeof c === 'function' ? c : convertFromV5((c: any))
-          const id = this._genCmdID(Command)
-          const publicFlags = this._genCmdPublicFlags(Command)
-          cmdsWithFlags.push(`${id} ${publicFlags}`.trim())
-          cmdFlagsSetters.push(this._genZshCmdFlagsSetter(Command))
-          cmdsWithDesc.push(this._genCmdWithDescription(Command))
-        } catch (err) {
-          debug(`Error creating autocomplete a command in ${p.name}, moving on...`)
-          debug(err.message)
-          this.writeLogFile(err.message)
-        }
-      })
-    })
+    let cmdFlagsSetters: string[] = []
+    let cmdsWithDesc: string[] = []
+    const Legacy = new PluginLegacy(this.config)
+    await Promise.all(
+      this.plugins.map(async p => {
+        let plgs = (await p.load()).commands || []
+        return plgs.map((c: any) => {
+          try {
+            if (c.hidden || !c.topic) return
+            const Command = typeof c === 'function' ? c : Legacy.convert(c)
+            const id = this._genCmdID(Command)
+            const publicFlags = this._genCmdPublicFlags(Command)
+            cmdsWithFlags.push(`${id} ${publicFlags}`.trim())
+            cmdFlagsSetters.push(this._genZshCmdFlagsSetter(Command))
+            cmdsWithDesc.push(this._genCmdWithDescription(Command))
+          } catch (err) {
+            debug(`Error creating autocomplete a command in ${p.name}, moving on...`)
+            debug(err.message)
+            this.writeLogFile(err.message)
+          }
+        })
+      }),
+    )
     return {
       cmdsWithFlags: cmdsWithFlags.join('\n'),
       cmdFlagsSetters: cmdFlagsSetters.join('\n'),
@@ -92,34 +100,38 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
     }
   }
 
-  _genCmdID(Command: Class<Command<*>>): string {
-    return Command.command ? `${Command.topic}:${Command.command}` : Command.topic
+  _genCmdID(Kommand: ICommand): string {
+    let id = Kommand.command ? `${Kommand.topic}:${Kommand.command}` : Kommand.topic
+    return id || 'undefinedcommand'
   }
 
-  _genCmdPublicFlags(Command: Class<Command<*>>): string {
-    return Object.keys(Command.flags || {})
-      .filter(flag => !Command.flags[flag].hidden)
+  _genCmdPublicFlags(Command: ICommand): string {
+    let Flags = Command.flags || {}
+    return Object.keys(Flags)
+      .filter(flag => !Flags[flag].hidden)
       .map(flag => `--${flag}`)
       .join(' ')
   }
 
-  _genCmdWithDescription(Command: Class<Command<*>>): string {
+  _genCmdWithDescription(Command: ICommand): string {
     const description = Command.description ? `:"${Command.description}"` : ''
     return `"${this._genCmdID(Command).replace(/:/g, '\\:')}"${description}`
   }
 
-  _genZshCmdFlagsSetter(Command: Class<Command<*>>): string {
+  _genZshCmdFlagsSetter(Command: ICommand): string {
     const id = this._genCmdID(Command)
     const flagscompletions = Object.keys(Command.flags || {})
-      .filter(flag => !Command.flags[flag].hidden)
+      .filter(flag => Command.flags && !Command.flags[flag].hidden)
       .map(flag => {
-        const f = Command.flags[flag]
-        const name = f.parse ? `${flag}=-` : flag
+        const f = (Command.flags && Command.flags[flag]) || { description: '' }
+        const hasParse = f.hasOwnProperty('parse')
+        const hasCompletion = f.hasOwnProperty('completion')
+        const name = hasParse ? `${flag}=-` : flag
         let cachecompl = ''
-        if (f.completion) {
+        if (hasCompletion) {
           cachecompl = `: :_compadd_flag_options`
         }
-        const help = f.parse ? (f.completion ? '(autocomplete) ' : '') : '(switch) '
+        const help = hasParse ? (hasCompletion ? '(autocomplete) ' : '') : '(switch) '
         const completion = `--${name}[${help}${f.description}]${cachecompl}`
         return `"${completion}"`
       })

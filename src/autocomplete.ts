@@ -1,26 +1,27 @@
 // @flow
 
-import Command from 'cli-engine-command'
-import cli from 'cli-ux'
-import moment from 'moment'
-import path from 'path'
+import Command from '@heroku-cli/command'
+import { cli } from 'cli-ux'
+import StreamOutput from 'cli-ux/lib/stream'
+import * as moment from 'moment'
+import * as path from 'path'
 
-export class AutocompleteBase extends Command<*> {
-  errorIfWindows() {
+export abstract class AutocompleteBase extends Command {
+  public errorIfWindows() {
     if (this.config.windows) {
-      this.out.error('Autocomplete is not currently supported in Windows')
+      cli.error('Autocomplete is not currently supported in Windows')
     }
   }
 
-  get completionsCachePath(): string {
+  public get completionsCachePath(): string {
     return path.join(this.config.cacheDir, 'completions')
   }
 
-  get acLogfile(): string {
+  public get acLogfile(): string {
     return path.join(this.config.cacheDir, 'autocomplete.log')
   }
 
   writeLogFile(msg: string) {
-    cli.stdout.constructor.logToFile(`[${moment().format()}] ${msg}\n`, this.acLogfile)
+    StreamOutput.logToFile(`[${moment().format()}] ${msg}\n`, this.acLogfile)
   }
 }

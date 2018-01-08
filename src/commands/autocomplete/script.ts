@@ -1,7 +1,7 @@
 // @flow
 
-import cli from 'cli-ux'
-import path from 'path'
+import { cli } from 'cli-ux'
+import * as path from 'path'
 
 import { AutocompleteBase } from '../../autocomplete'
 

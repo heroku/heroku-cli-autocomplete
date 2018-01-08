@@ -1,7 +1,7 @@
 // @flow
 
-import klaw from 'klaw-sync'
-import path from 'path'
+import * as klaw from 'klaw-sync'
+import * as path from 'path'
 
 export const topics = [
   {
@@ -13,7 +13,7 @@ export const topics = [
 ]
 
 export const commands = klaw(path.join(__dirname, 'commands'), { nodir: true })
-  .filter(f => f.path.endsWith('.js'))
-  .filter(f => !f.path.endsWith('.test.js'))
-  .filter(f => f.path !== __filename)
-  .map(f => require(f.path))
+  .filter((f: any) => f.path.endsWith('.js'))
+  .filter((f: any) => !f.path.endsWith('.test.js'))
+  .filter((f: any) => f.path !== __filename)
+  .map((f: any) => require(f.path))

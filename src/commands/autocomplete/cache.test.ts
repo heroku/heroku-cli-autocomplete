@@ -1,8 +1,9 @@
 // @flow
 
-import { flags } from 'cli-engine-heroku'
-import os from 'os'
-import path from 'path'
+import Config from '@cli-engine/config'
+import { flags } from '@heroku-cli/command'
+import * as os from 'os'
+import * as path from 'path'
 
 import AutocompleteCacheBuilder from './cache'
 
@@ -18,14 +19,14 @@ class CacheBuildFlagsTest extends AutocompleteCacheBuilder {
 }
 
 // autocomplete will throw error on windows
-let runtest = os.platform() === 'windows' || os.platform() === 'win32' ? xtest : test
+let runtest = (os.platform() as any) === 'windows' || os.platform() === 'win32' ? xtest : test
 
 describe('AutocompleteCacheBuilder', () => {
   // Unit test private methods for extra coverage
   describe('private methods', () => {
-    let cmd
+    let cmd: any
     beforeAll(() => {
-      cmd = new AutocompleteCacheBuilder()
+      cmd = new AutocompleteCacheBuilder(new Config())
       cmd.plugins = [FooPlugin]
     })
 
@@ -83,7 +84,7 @@ bindkey "^I" expand-or-complete-with-dots`)
     })
 
     runtest('#_genShellSetups (0: bash)', async () => {
-      let cmd = await new AutocompleteCacheBuilder()
+      // let cmd = await new AutocompleteCacheBuilder(new Config())
       let shellSetups = await cmd._genShellSetups()
       expect(shellSetups[0]).toBe(`CLI_ENGINE_AC_ANALYTICS_DIR=${cmd.config.cacheDir}/completions/completion_analytics;
 CLI_ENGINE_AC_COMMANDS_PATH=${cmd.config.cacheDir}/completions/commands;
@@ -92,7 +93,7 @@ CLI_ENGINE_AC_BASH_COMPFUNC_PATH=${AC_PLUGIN_PATH}/autocomplete/bash/cli_engine.
     })
 
     runtest('#_genShellSetups (1: zsh)', async () => {
-      let cmd = await new AutocompleteCacheBuilder()
+      // let cmd = await new AutocompleteCacheBuilder(new Config())
       let shellSetups = await cmd._genShellSetups()
       expect(shellSetups[1]).toBe(`expand-or-complete-with-dots() {
   echo -n "..."
@@ -114,7 +115,7 @@ compinit;
     })
 
     runtest('#_genShellSetups (1: zsh w/o ellipsis)', async () => {
-      let cmd = await new AutocompleteCacheBuilder()
+      // let cmd = await new AutocompleteCacheBuilder()
       let shellSetups = await cmd._genShellSetups(true)
       expect(shellSetups[1]).toBe(`
 CLI_ENGINE_AC_ANALYTICS_DIR=${cmd.config.cacheDir}/completions/completion_analytics;

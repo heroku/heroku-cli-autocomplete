@@ -1,7 +1,7 @@
 // @flow
 
-import { flags } from 'cli-engine-heroku'
-import cli from 'cli-ux'
+import { flags } from '@heroku-cli/command'
+import { cli } from 'cli-ux'
 
 import { AutocompleteBase } from '../../autocomplete'
 
@@ -69,7 +69,7 @@ ${cli.color.cyan(`$ ${bin} apps:info --app=${tabStr}`)}
     }
 
     cli.action.start(`${cli.color.bold('Building autocomplete cache')}`)
-    await AutocompleteCacheBuilder.run(Object.assign(this.config, { argv: [this.argv[0], 'autocomplete:cache'] }))
+    await AutocompleteCacheBuilder.run([this.argv[0], 'autocomplete:cache'], this.config)
     cli.action.stop()
 
     cli.log('\nEnjoy!')

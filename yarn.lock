@@ -84,9 +84,25 @@
   version "2.0.30"
   resolved "https://registry.yarnpkg.com/@types/ansi-styles/-/ansi-styles-2.0.30.tgz#9a645299020a224afc6a8cd055195850b3c2af85"
 
+"@types/es6-shim@^0.31.35":
+  version "0.31.35"
+  resolved "https://registry.yarnpkg.com/@types/es6-shim/-/es6-shim-0.31.35.tgz#d11920d8d4c938ad912c51e699ed7ba2505ba1eb"
+
+"@types/fs-extra@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-5.0.0.tgz#d3e225b35eb5c6d3a5a782c28219df365c781413"
+  dependencies:
+    "@types/node" "*"
+
 "@types/jest@^22.0.1":
   version "22.0.1"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-22.0.1.tgz#6370a6d60cce3845e4cd5d00bf65f654264685bc"
+
+"@types/klaw-sync@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@types/klaw-sync/-/klaw-sync-1.1.3.tgz#fa9884ce6301be767213781bc83055812169457a"
+  dependencies:
+    "@types/node" "*"
 
 "@types/node@*", "@types/node@^8.0.58":
   version "8.5.7"

@@ -1,29 +1,33 @@
 // @flow
 
-import os from 'os'
-import path from 'path'
+import Config from '@cli-engine/config'
+import * as os from 'os'
+import * as path from 'path'
 
 import { AutocompleteBase } from './autocomplete'
 
 // autocomplete will throw error on windows
-let runtest = os.platform() === 'windows' || os.platform() === 'win32' ? xtest : test
+let runtest = (os.platform() as string) === 'windows' || os.platform() === 'win32' ? xtest : test
 
-const cmd = new AutocompleteBase()
+class AutocompleteTest extends AutocompleteBase {
+  async run() {}
+}
+const cmd = new AutocompleteTest(new Config())
 
 describe('AutocompleteBase', () => {
   runtest('#errorIfWindows', async () => {
     try {
-      new AutocompleteBase({ windows: true }).errorIfWindows()
+      new AutocompleteTest(new Config({ platform: 'win32' })).errorIfWindows()
     } catch (e) {
       expect(e).toMatch('Autocomplete is not currently supported in Windows')
     }
   })
 
   runtest('#completionsCachePath', async () => {
-    expect(cmd.completionsCachePath).toBe(path.join(cmd.config.cacheDir, 'completions'))
+    expect(cmd.completionsCachePath).toBe(path.join(new Config().cacheDir, 'completions'))
   })
 
   runtest('#acLogfile', async () => {
-    expect(cmd.acLogfile).toBe(path.join(cmd.config.cacheDir, 'autocomplete.log'))
+    expect(cmd.acLogfile).toBe(path.join(new Config().cacheDir, 'autocomplete.log'))
   })
 })

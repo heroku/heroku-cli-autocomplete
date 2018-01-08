@@ -1,6 +1,7 @@
 // @flow
 
-import { Command, flags } from 'cli-engine-heroku'
+import { Config } from '@cli-engine/engine/lib/config'
+import { Command, flags } from '@heroku-cli/command'
 
 import Options from './options'
 
@@ -11,12 +12,13 @@ class TestCommand extends Command {
   static flags = {
     app: flags.app(),
   }
+  async run() {}
 }
 
 describe('AutocompleteOptions', () => {
-  let cmd
+  let cmd: any
   beforeAll(() => {
-    cmd = new Options()
+    cmd = new Options(new Config())
   })
 
   describe('#_findFlagFromWildArg', () => {
