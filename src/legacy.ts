@@ -5,7 +5,9 @@ import { args as Args } from 'cli-flags'
 import _ from 'ts-lodash'
 import { inspect } from 'util'
 
-import deps from '@cli-engine/engine/lib/deps'
+import util = require('@cli-engine/engine/lib/util')
+import Heroku = require('@heroku-cli/command')
+import semver = require('semver')
 
 import { IPluginModule, IPluginTopic } from '@cli-engine/engine/lib/plugins/plugin'
 
@@ -94,7 +96,7 @@ export class PluginLegacy {
   }
 
   public convertFromV5(c: IV5Command): ICommand {
-    class V5 extends deps.Heroku.Command {
+    class V5 extends Heroku.Command {
       static id = _.compact([c.topic, c.command]).join(':')
       static description = c.description
       static hidden = !!c.hidden
@@ -121,12 +123,12 @@ export class PluginLegacy {
           org: this.flags.org,
           team: this.flags.team,
           config: this.config,
-          apiUrl: deps.Heroku.vars.apiUrl,
+          apiUrl: Heroku.vars.apiUrl,
           herokuDir: this.config.cacheDir,
           apiToken: this.heroku.auth,
-          apiHost: deps.Heroku.vars.apiHost,
-          gitHost: deps.Heroku.vars.gitHost,
-          httpGitHost: deps.Heroku.vars.httpGitHost,
+          apiHost: Heroku.vars.apiHost,
+          gitHost: Heroku.vars.gitHost,
+          httpGitHost: Heroku.vars.httpGitHost,
           cwd: process.cwd(),
         }
         ctx.auth.password = ctx.apiToken
@@ -141,12 +143,12 @@ export class PluginLegacy {
     }
 
     if (c.needsApp || c.wantsApp) {
-      V5.flags.app = deps.Heroku.flags.app({ required: !!c.needsApp })
-      V5.flags.remote = deps.Heroku.flags.remote()
+      V5.flags.app = Heroku.flags.app({ required: !!c.needsApp })
+      V5.flags.remote = Heroku.flags.remote()
     }
     if (c.needsOrg || c.wantsOrg) {
       let opts = { required: !!c.needsOrg, hidden: false, description: 'organization to use' }
-      V5.flags.org = deps.Heroku.flags.org(opts)
+      V5.flags.org = Heroku.flags.org(opts)
     }
     return V5
   }
@@ -177,7 +179,7 @@ export class PluginLegacy {
   private isICommand(command: AnyCommand): command is ICommand {
     let c = command as ICommand
     if (!c._version) return false
-    return deps.semver.gte(c._version, '11.0.0')
+    return semver.gte(c._version, '11.0.0')
   }
 
   private isV5Command(command: AnyCommand): command is IV5Command {
@@ -188,7 +190,7 @@ export class PluginLegacy {
   private isFlowCommand(command: AnyCommand): command is IFlowCommand {
     let c = command as IFlowCommand
     return typeof c === 'function'
-    // if (c._version && deps.semver.lt(c._version, '11.0.0')) return true
+    // if (c._version && semver.lt(c._version, '11.0.0')) return true
   }
 }
 
@@ -204,7 +206,7 @@ function convertFlagsFromV5(flags: ILegacyFlag[] | Flags.Input | undefined): Fla
         required: flag.required || flag.optional === false,
         parse: flag.parse,
       }
-      for (let [k, v] of deps.util.objEntries(opts)) {
+      for (let [k, v] of util.objEntries(opts)) {
         if (v === undefined) delete (opts as any)[k]
       }
       if (!opts.parse) delete opts.parse

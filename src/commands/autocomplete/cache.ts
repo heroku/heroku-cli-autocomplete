@@ -3,12 +3,12 @@
 // import Command from '@cli-engine/engine'
 import { ICommand } from '@cli-engine/config'
 import { Config } from '@cli-engine/engine/lib/config'
-import { PluginLegacy } from '../../legacy'
 import { cli } from 'cli-ux'
 import * as fs from 'fs-extra'
 import * as path from 'path'
 
 import { AutocompleteBase } from '../../autocomplete'
+import { PluginLegacy } from '../../legacy'
 
 const debug = require('debug')('cli-autocomplete:buildcache')
 
