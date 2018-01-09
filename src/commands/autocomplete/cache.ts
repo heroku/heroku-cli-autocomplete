@@ -26,7 +26,7 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
   static hidden = true
   static aliases = ['autocomplete:init']
 
-  plugins: {topics: any, commands: any}[] = []
+  plugins: { topics: any; commands: any }[] = []
 
   async run() {
     await this.createCaches()
