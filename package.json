@@ -29,7 +29,7 @@
     "tslib": "^1.8.1"
   },
   "devDependencies": {
-    "@cli-engine/util": "^1.1.5",
+    "@cli-engine/util": "1.1.4",
     "@heroku-cli/tslint": "^1.1.2",
     "@types/ansi-styles": "^2.0.30",
     "@types/debug": "^0.0.30",
