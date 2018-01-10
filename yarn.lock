@@ -22,7 +22,31 @@
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@cli-engine/config/-/config-5.1.0.tgz#d8ac7122317bc505dc09e7fd778777602d6b7568"
 
-"@cli-engine/engine@^6.1.27", "@cli-engine/engine@^6.1.30":
+"@cli-engine/engine@^6.1.27":
+  version "6.1.31"
+  resolved "https://registry.yarnpkg.com/@cli-engine/engine/-/engine-6.1.31.tgz#ad7e1d5f16388c8a83a33f4e51100a3f2a015209"
+  dependencies:
+    "@heroku-cli/color" "^1.1.1"
+    assync "^1.0.4"
+    cli-ux "^2.0.21"
+    cross-spawn "^5.1.0"
+    debug "^3.1.0"
+    filesize "^3.5.11"
+    fs-extra "^5.0.0"
+    globby "^7.1.1"
+    graceful-fs "^4.1.11"
+    http-call "^4.0.8"
+    klaw "^2.1.1"
+    log-chopper "^1.0.2"
+    moment "^2.20.1"
+    rwlockfile "^2.0.19"
+    semver "5.4.1"
+    string-similarity "^1.2.0"
+    strip-ansi "4.0.0"
+    ts-lodash "4.0.11"
+    yarn "^1.3.2"
+
+"@cli-engine/engine@^6.1.30":
   version "6.1.30"
   resolved "https://registry.yarnpkg.com/@cli-engine/engine/-/engine-6.1.30.tgz#0a3f15bb6a68d3fe191dd42dba1ec8c4c86a6ecd"
   dependencies:
@@ -3273,7 +3297,7 @@ run-async@^2.2.0:
   dependencies:
     is-promise "^2.1.0"
 
-rwlockfile@^2.0.17:
+rwlockfile@^2.0.17, rwlockfile@^2.0.19:
   version "2.0.19"
   resolved "https://registry.yarnpkg.com/rwlockfile/-/rwlockfile-2.0.19.tgz#33c9b06521db6646548aca8d9cc754685ae6fa6e"
   dependencies:
@@ -3691,15 +3715,15 @@ ts-jest@^22.0.0:
     source-map-support "^0.5.0"
     yargs "^10.0.3"
 
-ts-lodash@4.0.9:
-  version "4.0.9"
-  resolved "https://registry.yarnpkg.com/ts-lodash/-/ts-lodash-4.0.9.tgz#088d7ceefbf36c8c4bcdf28372249015ccafd429"
+ts-lodash@4.0.11, ts-lodash@^4.0.10, ts-lodash@^4.0.8:
+  version "4.0.11"
+  resolved "https://registry.yarnpkg.com/ts-lodash/-/ts-lodash-4.0.11.tgz#f668e2ad4b6cb3bcbeceb894cf0a8cde48b3cd85"
   dependencies:
     lodash "^4.17.4"
 
-ts-lodash@^4.0.10, ts-lodash@^4.0.8:
-  version "4.0.11"
-  resolved "https://registry.yarnpkg.com/ts-lodash/-/ts-lodash-4.0.11.tgz#f668e2ad4b6cb3bcbeceb894cf0a8cde48b3cd85"
+ts-lodash@4.0.9:
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/ts-lodash/-/ts-lodash-4.0.9.tgz#088d7ceefbf36c8c4bcdf28372249015ccafd429"
   dependencies:
     lodash "^4.17.4"
 

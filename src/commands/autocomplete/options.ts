@@ -1,8 +1,8 @@
 // @flow
 
 import { ICommand } from '@cli-engine/config'
+import { CommandManager } from '@cli-engine/engine/lib/command'
 import { Config } from '@cli-engine/engine/lib/config'
-import { Plugins } from '@cli-engine/engine/lib/plugins'
 import { APIClient, flags as Flags } from '@heroku-cli/command'
 import { cli } from 'cli-ux'
 import * as path from 'path'
@@ -33,18 +33,9 @@ export default class AutocompleteOptions extends AutocompleteBase {
       // B - find cmd to complete
       const cmdId = commandLineToComplete[1]
       const config = new Config(this.config)
-      const plugins = await new Plugins(config).list()
-      let Command: ICommand
-      let foundCmd: any
-      for (const plugin of plugins) {
-        let cmd = await plugin.findCommand(cmdId)
-        if (cmd) foundCmd = cmd
-      }
-      if (foundCmd) {
-        Command = foundCmd
-      } else {
-        throw new Error(`Command ${cmdId} not found`)
-      }
+      let iCmd = await new CommandManager(config).findCommand(cmdId)
+      if (!iCmd) throw new Error(`Command ${cmdId} not found`)
+      const Command = await iCmd.fetchCommand()
 
       // C -
       // 1. find what arg/flag is asking to be completed
