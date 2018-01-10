@@ -65,7 +65,7 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
           cmds.map(async (c: any) => {
             try {
               if (c.hidden) return
-              let Command = await p.findCommand(c.id, true)
+              let Command = await c.fetchCommand()
               Command = typeof Command === 'function' ? Command : Legacy.convertFromV5(Command as any)
               const id = this._genCmdID(Command)
               const publicFlags = this._genCmdPublicFlags(Command)

@@ -60,18 +60,18 @@ describe('AutocompleteCacheBuilder', () => {
 
     runtest('#_genCmdsCacheStrings (cmdsWithFlags)', async () => {
       const cacheStrings = await cmd._genCmdsCacheStrings()
-      expect(cacheStrings.cmdsWithFlags).toBe('foo:beta\nfoo:alpha --bar')
+      expect(cacheStrings.cmdsWithFlags).toBe('foo:alpha --bar\nfoo:beta')
     })
 
     runtest('#_genCmdsCacheStrings (cmdFlagsSetters)', async () => {
       const cacheStrings = await cmd._genCmdsCacheStrings()
-      expect(cacheStrings.cmdFlagsSetters).toBe(`# no flags for foo:beta
-_set_foo_alpha_flags () {
+      expect(cacheStrings.cmdFlagsSetters).toBe(`_set_foo_alpha_flags () {
 _flags=(
 "--bar[(switch) bar flag]"
 )
 }
-`)
+
+# no flags for foo:beta`)
     })
 
     runtest('#_genCmdsCacheStrings (cmdsWithDescSetter)', async () => {
@@ -79,8 +79,8 @@ _flags=(
       expect(cacheStrings.cmdsWithDescSetter).toBe(`
 _set_all_commands_list () {
 _all_commands_list=(
-"foo\\:beta":"foo:beta description"
 "foo\\:alpha":"foo:alpha description"
+"foo\\:beta":"foo:beta description"
 )
 }
 `)

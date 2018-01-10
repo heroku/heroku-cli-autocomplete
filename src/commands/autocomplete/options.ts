@@ -3,6 +3,7 @@
 import { ICommand } from '@cli-engine/config'
 import { CommandManager } from '@cli-engine/engine/lib/command'
 import { Config } from '@cli-engine/engine/lib/config'
+import { Plugins } from '@cli-engine/engine/lib/plugins'
 import { APIClient, flags as Flags } from '@heroku-cli/command'
 import { cli } from 'cli-ux'
 import * as path from 'path'
@@ -33,8 +34,9 @@ export default class AutocompleteOptions extends AutocompleteBase {
       // B - find cmd to complete
       const cmdId = commandLineToComplete[1]
       const config = new Config(this.config)
-      let iCmd = await new CommandManager(config).findCommand(cmdId)
-      if (!iCmd) throw new Error(`Command ${cmdId} not found`)
+      config.plugins = new Plugins(config)
+      const CM = new CommandManager(config)
+      const iCmd = await CM.findCommand(cmdId, true)
       const Command = await iCmd.fetchCommand()
 
       // C -
