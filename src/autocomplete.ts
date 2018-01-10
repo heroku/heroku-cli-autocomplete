@@ -1,5 +1,8 @@
 // @flow
 
+import { Config } from '@cli-engine/engine/lib/config'
+import { Plugins } from '@cli-engine/engine/lib/plugins'
+import { Plugin } from '@cli-engine/engine/lib/plugins/plugin'
 import Command from '@heroku-cli/command'
 import StreamOutput from 'cli-ux/lib/stream'
 import * as moment from 'moment'
@@ -22,5 +25,10 @@ export abstract class AutocompleteBase extends Command {
 
   writeLogFile(msg: string) {
     StreamOutput.logToFile(`[${moment().format()}] ${msg}\n`, this.acLogfile)
+  }
+
+  protected async plugins(): Promise<Plugin[]> {
+    const config = new Config(this.config)
+    return await new Plugins(config).list()
   }
 }

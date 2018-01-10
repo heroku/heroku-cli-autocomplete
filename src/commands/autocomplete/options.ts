@@ -2,6 +2,7 @@
 
 import { ICommand } from '@cli-engine/config'
 import { Config } from '@cli-engine/engine/lib/config'
+import { Plugins } from '@cli-engine/engine/lib/plugins'
 import { APIClient, flags as Flags } from '@heroku-cli/command'
 import { cli } from 'cli-ux'
 import * as path from 'path'
@@ -32,7 +33,7 @@ export default class AutocompleteOptions extends AutocompleteBase {
       // B - find cmd to complete
       const cmdId = commandLineToComplete[1]
       const config = new Config(this.config)
-      const plugins = await config.plugins.list()
+      const plugins = await new Plugins(config).list()
       let Command: ICommand
       let foundCmd: any
       for (const plugin of plugins) {

@@ -2,7 +2,6 @@
 
 // import Command from '@cli-engine/engine'
 import { ICommand } from '@cli-engine/config'
-import { Config } from '@cli-engine/engine/lib/config'
 import { cli } from 'cli-ux'
 import * as fs from 'fs-extra'
 import * as path from 'path'
@@ -26,15 +25,12 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
   static hidden = true
   static aliases = ['autocomplete:init']
 
-  plugins: { topics: any; commands: any }[] = []
-
   async run() {
     await this.createCaches()
   }
 
   async createCaches() {
     if (cli.config.mock) return
-    await this.hydratePlugins()
     // 1. ensure completions cache dir
     await fs.ensureDir(this.completionsCachePath)
     // 2. create commands cache strings
@@ -54,17 +50,6 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
     return process.env.CLI_ENGINE_AC_ZSH_SKIP_ELLIPSIS === '1'
   }
 
-  async hydratePlugins() {
-    const config = new Config(this.config)
-    const plugins = await config.plugins.list()
-    this.plugins = await Promise.all(
-      plugins.map(async (p: any) => {
-        const hydrated = await p.pluginPath.require()
-        return hydrated
-      }),
-    )
-  }
-
   async _genCmdsCacheStrings(): Promise<CacheStrings> {
     // bash
     let cmdsWithFlags: string[] = []
@@ -72,24 +57,28 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
     let cmdFlagsSetters: string[] = []
     let cmdsWithDesc: string[] = []
     const Legacy = new PluginLegacy(this.config)
+    const plugins = await this.plugins()
     await Promise.all(
-      this.plugins.map(async p => {
-        let plgs = p.commands || []
-        return plgs.map((c: any) => {
-          try {
-            if (c.hidden || !c.topic) return
-            const Command = typeof c === 'function' ? c : Legacy.convertFromV5(c)
-            const id = this._genCmdID(Command)
-            const publicFlags = this._genCmdPublicFlags(Command)
-            cmdsWithFlags.push(`${id} ${publicFlags}`.trim())
-            cmdFlagsSetters.push(this._genZshCmdFlagsSetter(Command))
-            cmdsWithDesc.push(this._genCmdWithDescription(Command))
-          } catch (err) {
-            debug(`Error creating autocomplete for command in ${this._genCmdID(c)}, moving on...`)
-            debug(err.message)
-            this.writeLogFile(err.message)
-          }
-        })
+      plugins.map(async p => {
+        let cmds = (await p.load()).commands || []
+        await Promise.all(
+          cmds.map(async (c: any) => {
+            try {
+              if (c.hidden) return
+              let Command = await p.findCommand(c.id, true)
+              Command = typeof Command === 'function' ? Command : Legacy.convertFromV5(Command as any)
+              const id = this._genCmdID(Command)
+              const publicFlags = this._genCmdPublicFlags(Command)
+              cmdsWithFlags.push(`${id} ${publicFlags}`.trim())
+              cmdFlagsSetters.push(this._genZshCmdFlagsSetter(Command))
+              cmdsWithDesc.push(this._genCmdWithDescription(Command))
+            } catch (err) {
+              debug(`Error creating autocomplete for command in ${this._genCmdID(c)}, moving on...`)
+              debug(err.message)
+              this.writeLogFile(err.message)
+            }
+          }),
+        )
       }),
     )
     return {
