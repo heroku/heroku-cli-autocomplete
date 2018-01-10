@@ -1,5 +1,3 @@
-// @flow
-
 import * as klaw from 'klaw-sync'
 import * as path from 'path'
 
