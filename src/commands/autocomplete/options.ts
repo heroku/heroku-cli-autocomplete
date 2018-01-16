@@ -48,13 +48,13 @@ export default class AutocompleteOptions extends AutocompleteBase {
       const cmdPreviousArgv = cmdArgv[cmdArgvCount - 2]
       // for now, suspending arg completion
       // let [cmdCurArgCount, cmdCurArgvIsFlag, cmdCurArgvIsFlagValue] =
-      let [cmdCurArgvIsFlag, cmdCurArgvIsFlagValue] = this._determineCmdState(cmdArgv, Command)
+      let [cmdCurArgvIsFlag, cmdCurArgvIsFlagValue] = this.determineCmdState(cmdArgv, Command)
       let cacheKey: any
       let cacheCompletion: any
 
       if (cmdCurArgvIsFlag || cmdCurArgvIsFlagValue) {
         const argvFlag = cmdCurArgvIsFlagValue ? cmdPreviousArgv : cmdCurArgv
-        let { name, flag } = this._findFlagFromWildArg(argvFlag, Command)
+        let { name, flag } = this.findFlagFromWildArg(argvFlag, Command)
         if (!flag) this.throwError(`${argvFlag} is not a valid flag for ${cmdId}`)
         cacheKey = name || flag.name
         cacheCompletion = flag.completion
@@ -91,6 +91,10 @@ export default class AutocompleteOptions extends AutocompleteBase {
         }
       }
 
+      // try to auto-populate the completion object
+      if (!cacheCompletion) {
+        cacheCompletion = this.findCompletion(cacheKey, cmdId)
+      }
       // build/retrieve & return options cache
       if (cacheCompletion && cacheCompletion.options) {
         // use cacheKey function or fallback to arg/flag name
@@ -115,12 +119,12 @@ export default class AutocompleteOptions extends AutocompleteBase {
     }
   }
 
-  throwError(msg: string) {
+  private throwError(msg: string) {
     throw new Error(msg)
   }
 
   // TO-DO: create a return type
-  _findFlagFromWildArg(wild: string, Command: ICommand): { flag: any; name: any } {
+  private findFlagFromWildArg(wild: string, Command: ICommand): { flag: any; name: any } {
     let name = wild.replace(/^-+/, '')
     name = name.replace(/=(.+)?$/, '')
 
@@ -137,7 +141,7 @@ export default class AutocompleteOptions extends AutocompleteBase {
     return unknown
   }
 
-  _determineCmdState(argv: Array<string>, Command: ICommand): [boolean, boolean] {
+  private determineCmdState(argv: Array<string>, Command: ICommand): [boolean, boolean] {
     let needFlagValueSatisfied = false
     let argIsFlag = false
     let argIsFlagValue = false
@@ -156,7 +160,7 @@ export default class AutocompleteOptions extends AutocompleteBase {
         // ignore me
         const wildSplit = wild.split('=')
         const key = wildSplit.length === 1 ? wild : wildSplit[0]
-        const { name, flag } = this._findFlagFromWildArg(key, Command)
+        const { name, flag } = this.findFlagFromWildArg(key, Command)
         flagName = name
         // end ignore me
 
