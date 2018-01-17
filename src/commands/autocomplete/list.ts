@@ -1,5 +1,3 @@
-// @flow
-
 import { ICommand } from '@cli-engine/config'
 import { flags as Flags } from '@heroku-cli/command'
 import { cli } from 'cli-ux'

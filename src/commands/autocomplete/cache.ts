@@ -1,6 +1,3 @@
-// @flow
-
-// import Command from '@cli-engine/engine'
 import { ICommand } from '@cli-engine/config'
 import { cli } from 'cli-ux'
 import * as fs from 'fs-extra'

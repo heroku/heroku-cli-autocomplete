@@ -1,5 +1,3 @@
-// @flow
-
 import { Config } from '@cli-engine/engine/lib/config'
 import { Plugins } from '@cli-engine/engine/lib/plugins'
 import { Plugin } from '@cli-engine/engine/lib/plugins/plugin'

@@ -1,5 +1,3 @@
-// @flow
-
 // TODO: move to its own package
 
 import * as fs from 'fs-extra'

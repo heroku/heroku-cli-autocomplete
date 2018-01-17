@@ -1,5 +1,3 @@
-// @flow
-
 import { ICommand } from '@cli-engine/config'
 import { CommandManager } from '@cli-engine/engine/lib/command'
 import { Config } from '@cli-engine/engine/lib/config'

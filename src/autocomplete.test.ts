@@ -1,5 +1,3 @@
-// @flow
-
 import Config from '@cli-engine/config'
 import { flags } from '@heroku-cli/command'
 import * as os from 'os'
