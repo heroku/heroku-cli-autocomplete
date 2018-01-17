@@ -24,83 +24,113 @@ export default class AutocompleteOptions extends AutocompleteBase {
   parsedArgs: { [name: string]: string } = {}
   parsedFlags: { [name: string]: string } = {}
 
+  // helpful dictionary
+  //
+  // *args: refers to a Command's static args
+  // *argv: refers to the current execution's command line positional input
+  // Command: (class) Command class
+  // completion: (object) object with data/methods to build/retrive options from cache
+  // curPosition*: the current argv position the shell is trying to complete
+  // options: (string) white-space seperated list of values for the shell to use for completion
+
   async run() {
     // ex: heroku autocomplete:options 'heroku addons:destroy -a myapp myaddon'
     try {
-      // A - grab cmd line to complete from argv
-      const commandLineToComplete = this.argv[0].split(' ')
-
-      // B - find cmd to complete
-      const cmdId = commandLineToComplete[1]
-      const config = new Config(this.config)
-      config.plugins = new Plugins(config)
-      const CM = new CommandManager(config)
-      const iCmd = await CM.findCommand(cmdId, true)
-      const Command = await iCmd.fetchCommand()
-
-      // C -
-      // 1. find what arg/flag is asking to be completed
-      // 2. set any parsable context from exisitng args/flags
-      // 3. set vars needed to build/retrive options cache
-      const slicedArgv = commandLineToComplete.slice(2)
-      const slicedArgvCount = slicedArgv.length
-      let [curPositionIsFlag, curPositionIsFlagValue] = this.determineCmdState(slicedArgv, Command)
-
-      let cacheKey: any
-      let cacheCompletion: any
-
-      if (curPositionIsFlag || curPositionIsFlagValue) {
-        const lastArgvArg = slicedArgv[slicedArgvCount - 1]
-        const previousArgvArg = slicedArgv[slicedArgvCount - 2]
-        const argvFlag = curPositionIsFlagValue ? previousArgvArg : lastArgvArg
-        let { name, flag } = this.findFlagFromWildArg(argvFlag, Command)
-        if (!flag) this.throwError(`${argvFlag} is not a valid flag for ${cmdId}`)
-        cacheKey = name || flag.name
-        cacheCompletion = flag.completion
-      } else {
-        // special config:* completions
-        if (cmdId.match(/config:(\w+)et$/)) {
-          if (this.flags.app) cacheCompletion = ConfigCompletion
-          else this.throwError(`No app found for config completion (cmdId: ${cmdId})`)
-        } else {
-          const cmdArgs = Command.args || []
-          const cmdArgsCount = cmdArgs.length
-          if (slicedArgvCount > cmdArgsCount || slicedArgvCount === 0)
-            this.throwError(`Cannot complete arg position ${slicedArgvCount} for ${cmdId}`)
-          const arg = cmdArgs[slicedArgvCount - 1]
-          cacheKey = arg.name
-        }
-      }
-
-      // try to auto-populate the completion object
-      if (!cacheCompletion) {
-        cacheCompletion = this.findCompletion(cacheKey, cmdId)
-      }
-      // build/retrieve & return options cache
-      if (cacheCompletion && cacheCompletion.options) {
-        // use cacheKey function or fallback to arg/flag name
-        const ctx = {
-          args: this.parsedArgs,
-          flags: this.parsedFlags,
-          argv: this.argv,
-          config: this.config,
-          app: this.flags.app, // special case for config completion
-        }
-        const ckey = cacheCompletion.cacheKey ? await cacheCompletion.cacheKey(ctx) : null
-        const key: string = ckey || cacheKey || 'unknown_key_error'
-        const flagCachePath = path.join(this.completionsCachePath, key)
-
-        // build/retrieve cache
-        const duration = cacheCompletion.cacheDuration || 60 * 60 * 24 // 1 day
-        const opts = { cacheFn: () => cacheCompletion.options(ctx) }
-        const options = await ACCache.fetch(flagCachePath, duration, opts)
-
-        // return options cache
-        cli.log((options || []).join('\n'))
-      }
+      const commandStateVars = await this.processCommandLine()
+      const completion = this.determineCompletion(commandStateVars)
+      const options = await this.fetchOptions(completion)
+      if (options) cli.log(options)
     } catch (err) {
       // write to ac log
       this.writeLogFile(err.message)
+    }
+  }
+
+  private async processCommandLine() {
+    // find command id
+    const commandLineToComplete = this.argv[0].split(' ')
+    const CommandID = commandLineToComplete[1]
+    // setup cli-engine Command Manager
+    const config = new Config(this.config)
+    config.plugins = new Plugins(config)
+    const CM = new CommandManager(config)
+    const iCmd = await CM.findCommand(CommandID, true)
+    // find Command
+    const Command = await iCmd.fetchCommand()
+    // process Command state from command line data
+    const slicedArgv = commandLineToComplete.slice(2)
+    const slicedArgvCount = slicedArgv.length
+    const [curPositionIsFlag, curPositionIsFlagValue] = this.determineCmdState(slicedArgv, Command)
+    return { CommandID, Command, curPositionIsFlag, curPositionIsFlagValue, slicedArgv, slicedArgvCount }
+  }
+
+  private determineCompletion(commandStateVars: any) {
+    const {
+      CommandID,
+      Command,
+      curPositionIsFlag,
+      curPositionIsFlagValue,
+      slicedArgv,
+      slicedArgvCount,
+    } = commandStateVars
+    // setup empty cache completion vars to assign
+    let cacheKey: any
+    let cacheCompletion: any
+
+    // completing a flag/value? else completing an arg
+    if (curPositionIsFlag || curPositionIsFlagValue) {
+      const lastArgvArg = slicedArgv[slicedArgvCount - 1]
+      const previousArgvArg = slicedArgv[slicedArgvCount - 2]
+      const argvFlag = curPositionIsFlagValue ? previousArgvArg : lastArgvArg
+      let { name, flag } = this.findFlagFromWildArg(argvFlag, Command)
+      if (!flag) this.throwError(`${argvFlag} is not a valid flag for ${CommandID}`)
+      cacheKey = name || flag.name
+      cacheCompletion = flag.completion
+    } else {
+      // special config:* completions
+      if (CommandID.match(/config:(\w+)et$/)) {
+        if (this.flags.app) cacheCompletion = ConfigCompletion
+        else this.throwError(`No app found for config completion (CommandID: ${CommandID})`)
+      } else {
+        const cmdArgs = Command.args || []
+        const cmdArgsCount = cmdArgs.length
+        if (slicedArgvCount > cmdArgsCount || slicedArgvCount === 0)
+          this.throwError(`Cannot complete arg position ${slicedArgvCount} for ${CommandID}`)
+        const arg = cmdArgs[slicedArgvCount - 1]
+        cacheKey = arg.name
+      }
+    }
+
+    // try to auto-populate the completion object
+    if (!cacheCompletion) {
+      cacheCompletion = this.findCompletion(cacheKey, CommandID)
+    }
+    return { cacheKey, cacheCompletion }
+  }
+
+  private async fetchOptions(cache: any) {
+    const { cacheCompletion, cacheKey } = cache
+    // build/retrieve & return options cache
+    if (cacheCompletion && cacheCompletion.options) {
+      const ctx = {
+        args: this.parsedArgs,
+        flags: this.parsedFlags,
+        argv: this.argv,
+        config: this.config,
+        app: this.flags.app, // special case for config completion
+      }
+      // use cacheKey function or fallback to arg/flag name
+      const ckey = cacheCompletion.cacheKey ? await cacheCompletion.cacheKey(ctx) : null
+      const key: string = ckey || cacheKey || 'unknown_key_error'
+      const flagCachePath = path.join(this.completionsCachePath, key)
+
+      // build/retrieve cache
+      const duration = cacheCompletion.cacheDuration || 60 * 60 * 24 // 1 day
+      const opts = { cacheFn: () => cacheCompletion.options(ctx) }
+      const options = await ACCache.fetch(flagCachePath, duration, opts)
+
+      // return options cache
+      return (options || []).join('\n')
     }
   }
 
