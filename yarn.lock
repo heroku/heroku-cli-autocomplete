@@ -10,9 +10,9 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@cli-engine/command@^12.1.0":
-  version "12.1.0"
-  resolved "https://registry.yarnpkg.com/@cli-engine/command/-/command-12.1.0.tgz#86300ad3c7f51b1c539f9c7b998204f52016e0a7"
+"@cli-engine/command@^12.1.0", "@cli-engine/command@^12.1.1":
+  version "12.1.1"
+  resolved "https://registry.yarnpkg.com/@cli-engine/command/-/command-12.1.1.tgz#bb6262f849b59531ec386414b2ea763fd9385415"
   dependencies:
     "@cli-engine/screen" "^0.0.0"
     chalk "^2.3.0"
@@ -103,15 +103,15 @@
     supports-color "^5.1.0"
 
 "@heroku-cli/command@^7.0.12":
-  version "7.0.13"
-  resolved "https://registry.yarnpkg.com/@heroku-cli/command/-/command-7.0.13.tgz#d2eafe24e4a0e1857f8ac81e84791e5ca392b6b9"
+  version "7.0.14"
+  resolved "https://registry.yarnpkg.com/@heroku-cli/command/-/command-7.0.14.tgz#d5b3aa4f24ec29d9d63fad81ade706ff373db579"
   dependencies:
-    "@cli-engine/command" "^12.1.0"
+    "@cli-engine/command" "^12.1.1"
     "@cli-engine/config" "^5.1.0"
     cli-ux "^2.0.21"
     heroku-client "3.0.6"
     http-call "^4.0.8"
-    netrc-parser "^3.0.0"
+    netrc-parser "^3.0.3"
 
 "@heroku-cli/tslint@^1.1.2":
   version "1.1.4"
@@ -2635,7 +2635,7 @@ natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
 
-netrc-parser@^3.0.0:
+netrc-parser@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/netrc-parser/-/netrc-parser-3.0.3.tgz#1b3e6cf85e7dc3618dc7daaf639b1fa624392852"
   dependencies:
