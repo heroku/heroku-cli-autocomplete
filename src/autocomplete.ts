@@ -3,18 +3,31 @@
 import { Config } from '@cli-engine/engine/lib/config'
 import { Plugins } from '@cli-engine/engine/lib/plugins'
 import { Plugin } from '@cli-engine/engine/lib/plugins/plugin'
-import Command, { flags } from '@heroku-cli/command'
+import Command, { APIClient, flags } from '@heroku-cli/command'
 import * as Completions from '@heroku-cli/command/lib/completions'
 import { AppCompletion, RemoteCompletion } from '@heroku-cli/command/lib/flags/app'
 import StreamOutput from 'cli-ux/lib/stream'
 import * as moment from 'moment'
 import * as path from 'path'
 
+export const ConfigCompletion: flags.ICompletion = {
+  cacheDuration: 60 * 60 * 24 * 7,
+  cacheKey: async (ctx: any) => {
+    return ctx.app ? `${ctx.app}_config_vars` : ''
+  },
+  options: async (ctx: any) => {
+    const heroku = new APIClient(ctx.config)
+    let { body: configs } = await heroku.get(`/apps/${ctx.app}/config-vars`)
+    return Object.keys(configs)
+  },
+}
+
 const CompletionMapping: { [key: string]: flags.ICompletion } = {
   app: AppCompletion,
   addon: Completions.AppAddonCompletion,
   dyno: Completions.AppDynoCompletion,
   buildpack: Completions.BuildpackCompletion,
+  config: ConfigCompletion,
   // dynosize: Completions.DynoSizeCompletion,
   // file: Completions.FileCompletion,
   pipeline: Completions.PipelineCompletion,

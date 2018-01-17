@@ -25,7 +25,6 @@
     "cli-ux": "^2.0.3",
     "debug": "^3.1.0",
     "klaw-sync": "^3.0.0",
-    "lodash.flatten": "^4.4.0",
     "shelljs": "^0.7.8",
     "tslib": "^1.8.1"
   },
