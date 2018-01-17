@@ -39,7 +39,7 @@ const CompletionMapping: { [key: string]: flags.ICompletion } = {
   space: Completions.SpaceCompletion,
   stack: Completions.StackCompletion,
   stage: Completions.StageCompletion,
-  Team: Completions.TeamCompletion,
+  team: Completions.TeamCompletion,
 }
 
 const CompletionBlacklist: { [key: string]: string[] } = {
