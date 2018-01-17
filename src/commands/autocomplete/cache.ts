@@ -114,7 +114,7 @@ export default class AutocompleteCacheBuilder extends AutocompleteBase {
       .map(flag => {
         const f = (Command.flags && Command.flags[flag]) || { description: '' }
         const hasParse = f.hasOwnProperty('parse')
-        const hasCompletion = f.hasOwnProperty('completion')
+        const hasCompletion = f.hasOwnProperty('completion') || this.findCompletion(flag, id)
         const name = hasParse ? `${flag}=-` : flag
         let cachecompl = ''
         if (hasCompletion) {

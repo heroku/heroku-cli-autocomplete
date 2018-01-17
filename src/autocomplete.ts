@@ -5,20 +5,22 @@ import { Plugins } from '@cli-engine/engine/lib/plugins'
 import { Plugin } from '@cli-engine/engine/lib/plugins/plugin'
 import Command, { flags } from '@heroku-cli/command'
 import * as Completions from '@heroku-cli/command/lib/completions'
+import { AppCompletion, RemoteCompletion } from '@heroku-cli/command/lib/flags/app'
 import StreamOutput from 'cli-ux/lib/stream'
 import * as moment from 'moment'
 import * as path from 'path'
 
-const ComplationMapping: { [key: string]: flags.ICompletion } = {
-  app: Completions.AppCompletion,
+const CompletionMapping: { [key: string]: flags.ICompletion } = {
+  app: AppCompletion,
   addon: Completions.AppAddonCompletion,
   dyno: Completions.AppDynoCompletion,
   buildpack: Completions.BuildpackCompletion,
-  // dynosize: Completions.AppCompletion,
+  // dynosize: Completions.DynoSizeCompletion,
   // file: Completions.FileCompletion,
   pipeline: Completions.PipelineCompletion,
   // processtype: Completions.ProcessTypeCompletion,
   region: Completions.RegionCompletion,
+  remote: RemoteCompletion,
   role: Completions.RoleCompletion,
   scope: Completions.ScopeCompletion,
   space: Completions.SpaceCompletion,
@@ -57,7 +59,7 @@ export abstract class AutocompleteBase extends Command {
 
   protected findCompletion(name: string, id: string): flags.ICompletion | undefined {
     if (this.blacklisted(name, id)) return
-    if (ComplationMapping[name]) return ComplationMapping[name]
+    if (CompletionMapping[name]) return CompletionMapping[name]
   }
 
   private blacklisted(name: string, id: string): boolean {
