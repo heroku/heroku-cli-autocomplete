@@ -6,7 +6,7 @@ import { flags as Flags } from '@heroku-cli/command'
 import { cli } from 'cli-ux'
 import * as path from 'path'
 
-import { AutocompleteBase, ConfigCompletion } from '../../autocomplete'
+import { AutocompleteBase } from '../../autocomplete'
 import ACCache from '../../cache'
 
 export default class AutocompleteOptions extends AutocompleteBase {
@@ -57,26 +57,19 @@ export default class AutocompleteOptions extends AutocompleteBase {
     const Command = await iCmd.fetchCommand()
     // process Command state from command line data
     const slicedArgv = commandLineToComplete.slice(2)
-    const slicedArgvCount = slicedArgv.length
     const [curPositionIsFlag, curPositionIsFlagValue] = this.determineCmdState(slicedArgv, Command)
-    return { CommandID, Command, curPositionIsFlag, curPositionIsFlagValue, slicedArgv, slicedArgvCount }
+    return { CommandID, Command, curPositionIsFlag, curPositionIsFlagValue, slicedArgv }
   }
 
   private determineCompletion(commandStateVars: any) {
-    const {
-      CommandID,
-      Command,
-      curPositionIsFlag,
-      curPositionIsFlagValue,
-      slicedArgv,
-      slicedArgvCount,
-    } = commandStateVars
+    const { CommandID, Command, curPositionIsFlag, curPositionIsFlagValue, slicedArgv } = commandStateVars
     // setup empty cache completion vars to assign
     let cacheKey: any
     let cacheCompletion: any
 
     // completing a flag/value? else completing an arg
     if (curPositionIsFlag || curPositionIsFlagValue) {
+      const slicedArgvCount = slicedArgv.length
       const lastArgvArg = slicedArgv[slicedArgvCount - 1]
       const previousArgvArg = slicedArgv[slicedArgvCount - 2]
       const argvFlag = curPositionIsFlagValue ? previousArgvArg : lastArgvArg
@@ -85,18 +78,13 @@ export default class AutocompleteOptions extends AutocompleteBase {
       cacheKey = name || flag.name
       cacheCompletion = flag.completion
     } else {
-      // special config:* completions
-      if (CommandID.match(/config:(\w+)et$/)) {
-        if (this.flags.app) cacheCompletion = ConfigCompletion
-        else this.throwError(`No app found for config completion (CommandID: ${CommandID})`)
-      } else {
-        const cmdArgs = Command.args || []
-        const cmdArgsCount = cmdArgs.length
-        if (slicedArgvCount > cmdArgsCount || slicedArgvCount === 0)
-          this.throwError(`Cannot complete arg position ${slicedArgvCount} for ${CommandID}`)
-        const arg = cmdArgs[slicedArgvCount - 1]
-        cacheKey = arg.name
-      }
+      const cmdArgs = Command.args || []
+      const cmdArgsCount = cmdArgs.length
+      const parsedArgsLength = Object.keys(this.parsedArgs).length
+      if (parsedArgsLength > cmdArgsCount || !parsedArgsLength)
+        this.throwError(`Cannot complete arg position ${parsedArgsLength} for ${CommandID}`)
+      const arg = cmdArgs[parsedArgsLength - 1]
+      cacheKey = arg.name
     }
 
     // try to auto-populate the completion object
@@ -115,7 +103,7 @@ export default class AutocompleteOptions extends AutocompleteBase {
         flags: this.parsedFlags,
         argv: this.argv,
         config: this.config,
-        app: this.flags.app, // special case for config completion
+        app: this.determineApp(), // special case when app env var
       }
       // use cacheKey function or fallback to arg/flag name
       const ckey = cacheCompletion.cacheKey ? await cacheCompletion.cacheKey(ctx) : null
@@ -130,6 +118,10 @@ export default class AutocompleteOptions extends AutocompleteBase {
       // return options cache
       return (options || []).join('\n')
     }
+  }
+
+  private determineApp() {
+    return this.flags.app || this.parsedFlags.app || this.parsedArgs.app
   }
 
   private throwError(msg: string) {

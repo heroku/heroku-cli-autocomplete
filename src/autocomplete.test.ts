@@ -40,4 +40,9 @@ describe('AutocompleteBase', () => {
     expect((cmd as any).findCompletion('app', AutocompleteTest.id)).toBeTruthy()
     expect((cmd as any).findCompletion('bar', AutocompleteTest.id)).toBeFalsy()
   })
+
+  runtest('#convertIfAlias', async () => {
+    expect((cmd as any).convertIfAlias('key')).toBe('config')
+    expect((cmd as any).convertIfAlias('bar')).toBe('bar')
+  })
 })

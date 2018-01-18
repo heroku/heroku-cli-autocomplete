@@ -44,6 +44,10 @@ const CompletionBlacklist: { [key: string]: string[] } = {
   app: ['apps:create'],
 }
 
+const CompletionAliases: { [key: string]: string } = {
+  key: 'config',
+}
+
 export abstract class AutocompleteBase extends Command {
   public errorIfWindows() {
     if (this.config.windows) {
@@ -70,10 +74,17 @@ export abstract class AutocompleteBase extends Command {
 
   protected findCompletion(name: string, id: string): flags.ICompletion | undefined {
     if (this.blacklisted(name, id)) return
-    if (CompletionMapping[name]) return CompletionMapping[name]
+    const alias = this.convertIfAlias(name)
+    if (CompletionMapping[alias]) return CompletionMapping[alias]
   }
 
   private blacklisted(name: string, id: string): boolean {
     return CompletionBlacklist[name] && CompletionBlacklist[name].includes(id)
+  }
+
+  private convertIfAlias(name: string): string {
+    let alias = CompletionAliases[name]
+    if (alias) return alias
+    return name
   }
 }
