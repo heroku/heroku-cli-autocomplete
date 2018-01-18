@@ -81,8 +81,9 @@ export default class AutocompleteOptions extends AutocompleteBase {
       const cmdArgs = Command.args || []
       const cmdArgsCount = cmdArgs.length
       const parsedArgsLength = Object.keys(this.parsedArgs).length
+      // TO-DO: how to handle variableArgs?
       if (parsedArgsLength > cmdArgsCount || !parsedArgsLength)
-        this.throwError(`Cannot complete arg position ${parsedArgsLength} for ${CommandID}`)
+        this.throwError(`Cannot complete arg position ${parsedArgsLength - 1} for ${CommandID}`)
       const arg = cmdArgs[parsedArgsLength - 1]
       cacheKey = arg.name
     }
@@ -152,7 +153,7 @@ export default class AutocompleteOptions extends AutocompleteBase {
     return unknown
   }
 
-  private determineCmdState(argv: Array<string>, Command: ICommand): [boolean, boolean] {
+  private determineCmdState(argv: string[], Command: ICommand): [boolean, boolean] {
     let needFlagValueSatisfied = false
     let argIsFlag = false
     let argIsFlagValue = false
@@ -212,8 +213,8 @@ export default class AutocompleteOptions extends AutocompleteBase {
 
       // add parsedArgs
       // TO-DO: how to handle variableArgs?
-      if (argsIndex < (Command.args || []).length) {
-        let CArgs = Command.args || []
+      let CArgs = Command.args || []
+      if (argsIndex < CArgs.length) {
         this.parsedArgs[CArgs[argsIndex].name] = wild
         argsIndex += 1
       }

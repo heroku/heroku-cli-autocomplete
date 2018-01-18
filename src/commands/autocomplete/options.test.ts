@@ -10,6 +10,7 @@ class TestCommand extends Command {
   static flags = {
     app: flags.app(),
   }
+  static args = [{ name: 'app', required: false }]
   async run() {}
 }
 
@@ -54,6 +55,8 @@ describe('AutocompleteOptions', () => {
 
     // foo:bar arg1 --app=| true, false
     // foo:bar arg1 --app=my| true, false
+
+    // foo:bar -a my-app | false false
 
     test('finds current state is neither a flag or flag value', () => {
       let [isFlag, isFlagValue] = cmd.determineCmdState(['arg1'], TestCommand)
@@ -100,6 +103,14 @@ describe('AutocompleteOptions', () => {
         expect([isFlag, isFlagValue]).toEqual([true, false])
         let [isFlag2, isFlagValue2] = cmd.determineCmdState(['arg1', '--app=my'], TestCommand)
         expect([isFlag2, isFlagValue2]).toEqual([true, false])
+      })
+    })
+
+    describe('flags before args', () => {
+      test('parsedArgs is 1', () => {
+        let [isFlag, isFlagValue] = cmd.determineCmdState(['-a', 'my-app', ''], TestCommand)
+        expect([isFlag, isFlagValue]).toEqual([false, false])
+        expect(cmd.parsedArgs).toMatchObject({ app: '' })
       })
     })
   })
