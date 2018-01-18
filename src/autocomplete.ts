@@ -8,15 +8,18 @@ import StreamOutput from 'cli-ux/lib/stream'
 import * as moment from 'moment'
 import * as path from 'path'
 
-export const ConfigCompletion: flags.ICompletion = {
+const ConfigCompletion: flags.ICompletion = {
   cacheDuration: 60 * 60 * 24 * 7,
   cacheKey: async (ctx: any) => {
-    return ctx.app ? `${ctx.app}_config_vars` : ''
+    return ctx.flags && ctx.flags.app ? `${ctx.flags.app}_config_vars` : ''
   },
   options: async (ctx: any) => {
     const heroku = new APIClient(ctx.config)
-    let { body: configs } = await heroku.get(`/apps/${ctx.app}/config-vars`)
-    return Object.keys(configs)
+    if (ctx.flags && ctx.flags.app) {
+      let { body: configs } = await heroku.get(`/apps/${ctx.flags.app}/config-vars`)
+      return Object.keys(configs)
+    }
+    return []
   },
 }
 

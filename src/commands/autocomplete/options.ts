@@ -100,10 +100,10 @@ export default class AutocompleteOptions extends AutocompleteBase {
     if (cacheCompletion && cacheCompletion.options) {
       const ctx = {
         args: this.parsedArgs,
-        flags: this.parsedFlags,
+        // special case for app & team env vars
+        flags: this.parsedFlagsWithEnvVars,
         argv: this.argv,
         config: this.config,
-        app: this.determineApp(), // special case when app env var
       }
       // use cacheKey function or fallback to arg/flag name
       const ckey = cacheCompletion.cacheKey ? await cacheCompletion.cacheKey(ctx) : null
@@ -120,8 +120,14 @@ export default class AutocompleteOptions extends AutocompleteBase {
     }
   }
 
-  private determineApp() {
-    return this.flags.app || this.parsedFlags.app || this.parsedArgs.app
+  private get parsedFlagsWithEnvVars() {
+    return Object.assign(
+      {
+        app: process.env.HEROKU_APP,
+        team: process.env.HEROKU_TEAM || process.env.HEROKU_ORG,
+      },
+      this.parsedFlags,
+    )
   }
 
   private throwError(msg: string) {
