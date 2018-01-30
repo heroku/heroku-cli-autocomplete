@@ -51,9 +51,8 @@ Enjoy!
 })
 
 runtest('skips instructions', async () => {
-  await Autocomplete.mock(['--skip-instructions'])
-  expect(cli.stdout.output).toMatch(`
-Enjoy!`)
+  await Autocomplete.mock(['bash', '--skip-instructions'])
+  expect(cli.stdout.output).toMatch(``)
 })
 
 runtest('errors on unsupported shell', async () => {
