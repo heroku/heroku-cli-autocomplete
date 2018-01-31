@@ -129,7 +129,7 @@ export default class AutocompleteOptions extends AutocompleteBase {
   private get parsedFlagsWithEnvVars() {
     return Object.assign(
       {
-        app: process.env.HEROKU_APP || this.flags.app,
+        app: process.env.HEROKU_APP,
         team: process.env.HEROKU_TEAM || process.env.HEROKU_ORG,
       },
       this.parsedFlags,
