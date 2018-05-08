@@ -40,21 +40,16 @@ export default class Index extends AutocompleteBase {
 
     if (!flags['skip-instructions']) {
       let tabStr = shell === 'bash' ? '<TAB><TAB>' : '<TAB>'
+      let note = shell === 'zsh' ? `After sourcing, you can run \`${chalk.cyan('$ compaudit -D')}\` to ensure no permissions conflicts are present` : 'If your terminal starts as a login shell you may need to print the init script into ~/.bash_profile or ~/.profile.'
 
       this.log(`
 ${chalk.bold(`Setup Instructions for ${bin.toUpperCase()} CLI Autocomplete ---`)}
 
 1) Add the autocomplete env var to your ${shell} profile and source it
 ${chalk.cyan(`$ printf "$(${bin} autocomplete:script ${shell})" >> ~/.${shell}rc; source ~/.${shell}rc`)}
-${
-        shell === 'zsh'
-          ? `
-NOTE: After sourcing, you can run \`${chalk.cyan('$ compaudit -D')}\` to ensure no permissions conflicts are present
-`
-          : `
-NOTE: If your terminal starts as a login shell you may need to print the init script into ~/.bash_profile or ~/.profile.
-`
-      }
+
+NOTE: ${note}
+
 2) Test it out, e.g.:
 ${chalk.cyan(`$ ${bin} ${tabStr}`)}                 # Command completion
 ${chalk.cyan(`$ ${bin} apps:info --${tabStr}`)}     # Flag completion
