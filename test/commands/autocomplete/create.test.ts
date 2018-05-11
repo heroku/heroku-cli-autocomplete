@@ -4,7 +4,7 @@ import {loadJSON} from '@oclif/config/lib/util'
 import {expect} from 'chai'
 import * as path from 'path'
 
-import Buildcache from '../../../src/commands/autocomplete/buildcache'
+import Create from '../../../src/commands/autocomplete/create'
 
 const root = path.resolve(__dirname, '../../../package.json')
 const config = new Config({root})
@@ -14,7 +14,7 @@ const {default: runtest} = require('../../helpers/runtest')
 
 const AC_PLUGIN_PATH = path.resolve(__dirname, '..', '..', '..')
 
-class CacheBuildFlagsTest extends Buildcache {
+class CacheBuildFlagsTest extends Create {
   static flags = {
     app: flags.app(),
     visable: flags.boolean({description: 'Visable flag', char: 'v'}),
@@ -22,7 +22,7 @@ class CacheBuildFlagsTest extends Buildcache {
   }
 }
 
-runtest('Buildcache', () => {
+runtest('Create', () => {
   // Unit test private methods for extra coverage
   describe('private methods', () => {
     let cmd: any
@@ -30,7 +30,7 @@ runtest('Buildcache', () => {
     let plugin: any
     before(async () => {
       await config.load()
-      cmd = new Buildcache([], config)
+      cmd = new Create([], config)
       plugin = new Plugin({root})
       cmd.config.plugins = [plugin]
       await plugin.load()
@@ -52,17 +52,26 @@ runtest('Buildcache', () => {
     it('#genCmdPublicFlags', async () => {
       expect(cmd.genCmdPublicFlags(CacheBuildFlagsTest)).to.eq('--app --visable')
       expect(cmd.genCmdPublicFlags(CacheBuildFlagsTest)).to.not.match(/--hidden/)
-      expect(cmd.genCmdPublicFlags(Buildcache)).to.eq('')
+      expect(cmd.genCmdPublicFlags(Create)).to.eq('')
     })
 
-    it('#genCmdsCacheStrings (cmdsWithFlags)', async () => {
-      const cacheStrings = await cmd.genCmdsCacheStrings()
-      expect(cacheStrings.cmdsWithFlags).to.eq('autocomplete --skip-instructions\nautocomplete:foo --app --bar --json')
+    it('#genFileStrings (bashCmdsWithFlags)', async () => {
+      const cacheStrings = await cmd.genFileStrings
+      expect(cacheStrings.bashCmdsWithFlags).to.eq('autocomplete --skip-instructions\nautocomplete:foo --app --bar --json')
     })
 
-    it('#genCmdsCacheStrings (cmdFlagsSetters)', async () => {
-      const cacheStrings = await cmd.genCmdsCacheStrings()
-      expect(cacheStrings.cmdFlagsSetters).to.eq(`_set_autocomplete_flags () {
+    it('#genFileStrings (zshSetters)', async () => {
+      const cacheStrings = await cmd.genFileStrings
+      // expect(cacheStrings.zshSetters).to.eq('')
+      expect(cacheStrings.zshSetters).to.eq(`
+_set_all_commands_list () {
+_all_commands_list=(
+"autocomplete":"display autocomplete instructions"
+"autocomplete\\:foo":"foo cmd for autocomplete testing"
+)
+}
+
+_set_autocomplete_flags () {
 _flags=(
 "--skip-instructions[(switch) Do not show installation instructions]"
 )
@@ -78,18 +87,6 @@ _flags=(
 `)
     })
 
-    it('#genCmdsCacheStrings (cmdsWithDescSetter)', async () => {
-      const cacheStrings = await cmd.genCmdsCacheStrings()
-      expect(cacheStrings.cmdsWithDescSetter).to.eq(`
-_set_all_commands_list () {
-_all_commands_list=(
-"autocomplete":"display autocomplete instructions"
-"autocomplete\\:foo":"foo cmd for autocomplete testing"
-)
-}
-`)
-    })
-
     it('#genCompletionDotsFunc', async () => {
       expect(await cmd.genCompletionDotsFunc()).to.eq(`expand-or-complete-with-dots() {
   echo -n "..."
@@ -100,17 +97,17 @@ zle -N expand-or-complete-with-dots
 bindkey "^I" expand-or-complete-with-dots`)
     })
 
-    it('#genShellSetups (0: bash)', async () => {
-      let shellSetups = await cmd.genShellSetups()
-      expect(shellSetups[0]).to.eq(`HEROKU_AC_ANALYTICS_DIR=${cmd.config.cacheDir}/autocomplete/completion_analytics;
+    it('#genBashSetupScript', async () => {
+      let shellSetup = await cmd.genBashSetupScript
+      expect(shellSetup).to.eq(`HEROKU_AC_ANALYTICS_DIR=${cmd.config.cacheDir}/autocomplete/completion_analytics;
 HEROKU_AC_COMMANDS_PATH=${cmd.config.cacheDir}/autocomplete/commands;
 HEROKU_AC_BASH_COMPFUNC_PATH=${AC_PLUGIN_PATH}/autocomplete/bash/cli_engine.bash && test -f $HEROKU_AC_BASH_COMPFUNC_PATH && source $HEROKU_AC_BASH_COMPFUNC_PATH;
 `)
     })
 
-    it('#genShellSetups (1: zsh)', async () => {
-      let shellSetups = await cmd.genShellSetups()
-      expect(shellSetups[1]).to.eq(`expand-or-complete-with-dots() {
+    it('#genZshSetupScript', async () => {
+      let shellSetup = await cmd.genZshSetupScript
+      expect(shellSetup).to.eq(`expand-or-complete-with-dots() {
   echo -n "..."
   zle expand-or-complete
   zle redisplay
@@ -129,9 +126,12 @@ compinit;
 `)
     })
 
-    it('#genShellSetups (1: zsh w/o ellipsis)', async () => {
-      let shellSetups = await cmd.genShellSetups(true)
-      expect(shellSetups[1]).to.eq(`
+    it('#genZshSetupScript (w/o ellipsis)', async () => {
+      const oldEnv = process.env
+      process.env.HEROKU_AC_ZSH_SKIP_ELLIPSIS = '1'
+      let shellSetup = await cmd.genZshSetupScript
+
+      expect(shellSetup).to.eq(`
 HEROKU_AC_ANALYTICS_DIR=${cmd.config.cacheDir}/autocomplete/completion_analytics;
 HEROKU_AC_COMMANDS_PATH=${cmd.config.cacheDir}/autocomplete/commands;
 HEROKU_AC_ZSH_SETTERS_PATH=\${HEROKU_AC_COMMANDS_PATH}_setters && test -f $HEROKU_AC_ZSH_SETTERS_PATH && source $HEROKU_AC_ZSH_SETTERS_PATH;
@@ -142,6 +142,7 @@ $fpath
 autoload -Uz compinit;
 compinit;
 `)
+      process.env = oldEnv
     })
 
     it('#genZshAllCmdsListSetter', async () => {
@@ -157,7 +158,7 @@ _all_commands_list=(
     })
 
     it('#genZshCmdFlagsSetter', async () => {
-      expect(await cmd.genZshCmdFlagsSetter(CacheBuildFlagsTest)).to.eq(`_set_autocomplete_buildcache_flags () {
+      expect(await cmd.genZshCmdFlagsSetter(CacheBuildFlagsTest)).to.eq(`_set_autocomplete_create_flags () {
 _flags=(
 "--app=-[(autocomplete) app to run command against]: :_compadd_flag_options"
 "--visable[(switch) Visable flag]"

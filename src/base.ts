@@ -12,11 +12,17 @@ export abstract class AutocompleteBase extends Command {
     }
   }
 
-  public get autocompleteCachePath(): string {
+  public errorIfNotSupportedShell(shell: string) {
+    if (!['bash', 'zsh'].includes(shell)) {
+      throw new Error(`Currently ${shell} is not a supported shell for autocomplete`)
+    }
+  }
+
+  public get autocompleteCacheDir(): string {
     return path.join(this.config.cacheDir, 'autocomplete')
   }
 
-  public get completionsCachePath(): string {
+  public get completionsCacheDir(): string {
     return path.join(this.config.cacheDir, 'autocomplete', 'completions')
   }
 

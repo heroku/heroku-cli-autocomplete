@@ -2,13 +2,12 @@ import {AutocompleteBase} from '../../base'
 
 export default class List extends AutocompleteBase {
   static hidden = true
-  static description = 'debugger for autocomplete'
+  static description = 'debugging list for autocomplete commands'
 
   async run() {
     this.errorIfWindows()
 
-    const plugins = this.config.plugins
-    plugins.map(p => {
+    this.config.plugins.map(p => {
       p.commands.map(c => {
         try {
           if (c.hidden) {

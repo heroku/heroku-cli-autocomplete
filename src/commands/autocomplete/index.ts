@@ -4,15 +4,15 @@ import {cli} from 'cli-ux'
 
 import {AutocompleteBase} from '../../base'
 
-import Buildcache from './buildcache'
+import Create from './create'
 
 export default class Index extends AutocompleteBase {
-  static description = 'display autocomplete instructions'
+  static description = 'display autocomplete installation instructions'
 
   static args = [{name: 'shell', description: 'shell type', required: false}]
 
   static flags = {
-    'skip-instructions': flags.boolean({description: 'Do not show installation instructions', char: 's'}),
+    'skip-instructions': flags.boolean({description: 'don\'t show installation instructions', char: 's'}),
   }
 
   static examples = [
@@ -22,25 +22,27 @@ export default class Index extends AutocompleteBase {
   ]
 
   async run() {
-    const {args, flags} = this.parse(Index)
-
     this.errorIfWindows()
 
-    const bin = this.config.bin
+    const {args, flags} = this.parse(Index)
     const shell = args.shell || this.config.shell
+
     if (!shell) {
       this.error('Error: Missing required argument shell')
-    } else if (shell !== 'bash' && shell !== 'zsh') {
-      this.error(`Currently ${shell} is not a supported shell for autocomplete`)
     }
 
+    this.errorIfNotSupportedShell(shell)
+
     cli.action.start(`${chalk.bold('Building the autocomplete cache')}`)
-    await Buildcache.run([], this.config)
+    await Create.run([], this.config)
     cli.action.stop()
 
     if (!flags['skip-instructions']) {
-      let tabStr = shell === 'bash' ? '<TAB><TAB>' : '<TAB>'
-      let note = shell === 'zsh' ? `After sourcing, you can run \`${chalk.cyan('$ compaudit -D')}\` to ensure no permissions conflicts are present` : 'If your terminal starts as a login shell you may need to print the init script into ~/.bash_profile or ~/.profile.'
+      const bin = this.config.bin
+      const bashNote = 'If your terminal starts as a login shell you may need to print the init script into ~/.bash_profile or ~/.profile.'
+      const zshNote = `After sourcing, you can run \`${chalk.cyan('$ compaudit -D')}\` to ensure no permissions conflicts are present`
+      const note = shell === 'zsh' ? zshNote : bashNote
+      const tabStr = shell === 'bash' ? '<TAB><TAB>' : '<TAB>'
 
       this.log(`
 ${chalk.bold(`Setup Instructions for ${bin.toUpperCase()} CLI Autocomplete ---`)}

@@ -35,12 +35,12 @@ runtest('AutocompleteBase', () => {
     }
   })
 
-  it('#autocompleteCachePath', async () => {
-    expect(cmd.autocompleteCachePath).to.eq(path.join(config.cacheDir, 'autocomplete'))
+  it('#autocompleteCacheDir', async () => {
+    expect(cmd.autocompleteCacheDir).to.eq(path.join(config.cacheDir, 'autocomplete'))
   })
 
-  it('#completionsCachePath', async () => {
-    expect(cmd.completionsCachePath).to.eq(path.join(config.cacheDir, 'autocomplete', 'completions'))
+  it('#completionsCacheDir', async () => {
+    expect(cmd.completionsCacheDir).to.eq(path.join(config.cacheDir, 'autocomplete', 'completions'))
   })
 
   it('#acLogfile', async () => {

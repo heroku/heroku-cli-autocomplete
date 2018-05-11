@@ -7,7 +7,7 @@ import {fetchCache} from '../../cache'
 
 export default class Options extends AutocompleteBase {
   static hidden = true
-  static description = 'dynamic completion'
+  static description = 'display arg or flag completion options (used internally by completion fuctions)'
   static flags = {
     app: flags.app({required: false, hidden: true}),
   }
@@ -40,17 +40,6 @@ export default class Options extends AutocompleteBase {
       // write to ac log
       this.writeLogFile(err.message)
     }
-
-    // const plugins = this.config.plugins
-    // plugins.map(p => {
-    //   p.commands.map(c => {
-    //     try {
-    //
-    //     } catch {
-    //
-    //     }
-    //   })
-    // })
   }
 
     private async processCommandLine() {
@@ -124,7 +113,7 @@ export default class Options extends AutocompleteBase {
         // use cacheKey function or fallback to arg/flag name
         const ckey = cacheCompletion.cacheKey ? await cacheCompletion.cacheKey(ctx) : null
         const key: string = ckey || cacheKey || 'unknown_key_error'
-        const flagCachePath = path.join(this.completionsCachePath, key)
+        const flagCachePath = path.join(this.completionsCacheDir, key)
 
         // build/retrieve cache
         const duration = cacheCompletion.cacheDuration || 60 * 60 * 24 // 1 day
@@ -149,7 +138,6 @@ export default class Options extends AutocompleteBase {
       throw new Error(msg)
     }
 
-    // TO-DO: create a return type
     private findFlagFromWildArg(wild: string, Klass: Command): { flag: any; name: any } {
       let name = wild.replace(/^-+/, '')
       name = name.replace(/=(.+)?$/, '')
