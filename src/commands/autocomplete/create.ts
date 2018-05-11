@@ -4,7 +4,7 @@ import * as path from 'path'
 
 import {AutocompleteBase} from '../../base'
 
-const debug = require('debug')('cli-autocomplete:buildcache')
+const debug = require('debug')('autocomplete:create')
 
 export default class Create extends AutocompleteBase {
   static hidden = true
