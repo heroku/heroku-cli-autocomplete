@@ -6,10 +6,15 @@ import * as path from 'path'
 
 import acCreate from '../commands/autocomplete/create'
 
-export const completions: Hook<any> = async function ({type}: {type?: 'app' | 'addon'}) {
-  const lazy = type === 'app' || type === 'addon'
-  const rm = () => fs.emptyDir(path.join(this.config.cacheDir, 'autocomplete', 'completions'))
-  if (lazy) return rm()
+export const completions: Hook<any> = async function ({type, app}: {type?: 'app' | 'addon' | 'config', app?: string}) {
+  const cachePath = path.join(this.config.cacheDir, 'autocomplete', 'completions')
+  const rm = () => fs.emptyDir(cachePath)
+  const rmKey = (cacheKey: string) => fs.remove(path.join(cachePath, cacheKey))
+
+  if (type === 'app') return rmKey('apps')
+  if (type === 'addon' && app) return rmKey(`${app}_addons`)
+  if (type === 'config' && app) return rmKey(`${app}_config_vars`)
+
   cli.action.start('Updating completions')
   await rm()
   const config: IConfig = this.config
