@@ -11,7 +11,7 @@ export const completions: Hook<any> = async function ({type, app}: {type?: 'app'
   const rm = () => fs.emptyDir(cachePath)
   const rmKey = (cacheKey: string) => fs.remove(path.join(cachePath, cacheKey))
 
-  if (type === 'app') return rmKey('apps')
+  if (type === 'app') return rmKey('app')
   if (type === 'addon' && app) return rmKey(`${app}_addons`)
   if (type === 'config' && app) return rmKey(`${app}_config_vars`)
 
