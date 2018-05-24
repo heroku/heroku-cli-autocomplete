@@ -1,4 +1,6 @@
 import {flags} from '@heroku-cli/command'
+import {AppCompletion, PipelineCompletion, SpaceCompletion, TeamCompletion} from '@heroku-cli/command/lib/completions'
+import {IConfig} from '@oclif/config'
 import chalk from 'chalk'
 import {cli} from 'cli-ux'
 
@@ -35,6 +37,11 @@ export default class Index extends AutocompleteBase {
 
     cli.action.start(`${chalk.bold('Building the autocomplete cache')}`)
     await Create.run([], this.config)
+    const config: IConfig = this.config
+    await AppCompletion.options({config})
+    await PipelineCompletion.options({config})
+    await SpaceCompletion.options({config})
+    await TeamCompletion.options({config})
     cli.action.stop()
 
     if (!flags['skip-instructions']) {
