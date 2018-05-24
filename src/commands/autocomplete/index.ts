@@ -39,9 +39,6 @@ export default class Index extends AutocompleteBase {
     await Create.run([], this.config)
     const config: IConfig = this.config
     await AppCompletion.options({config})
-    await PipelineCompletion.options({config})
-    await SpaceCompletion.options({config})
-    await TeamCompletion.options({config})
     cli.action.stop()
 
     if (!flags['skip-instructions']) {
