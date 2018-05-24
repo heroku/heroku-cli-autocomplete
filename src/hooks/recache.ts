@@ -6,7 +6,7 @@ import * as path from 'path'
 
 import acCreate from '../commands/autocomplete/create'
 
-export const completions: Hook<any> = async function ({type, app}: {type?: 'app' | 'addon' | 'config', app?: string}) {
+export const completions: Hook<any> = async function ({type, app}: {type?: 'app' | 'addon' | 'config' | 'login' | 'logout', app?: string}) {
   const cachePath = path.join(this.config.cacheDir, 'autocomplete', 'completions')
   const rm = () => fs.emptyDir(cachePath)
   const rmKey = (cacheKey: string) => fs.remove(path.join(cachePath, cacheKey))
