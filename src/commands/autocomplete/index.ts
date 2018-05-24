@@ -37,8 +37,7 @@ export default class Index extends AutocompleteBase {
 
     cli.action.start(`${chalk.bold('Building the autocomplete cache')}`)
     await Create.run([], this.config)
-    const config: IConfig = this.config
-    await AppCompletion.options({config})
+    await AppCompletion.options({config: this.config})
     cli.action.stop()
 
     if (!flags['skip-instructions']) {

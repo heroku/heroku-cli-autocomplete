@@ -26,6 +26,7 @@
     "chai": "4",
     "globby": "8",
     "mocha": "5.2.0",
+    "nock": "^9.2.6",
     "nyc": "11.8.0",
     "ts-node": "6.0.3",
     "tslint": "5.10.0",
@@ -61,7 +62,7 @@
     "postpublish": "rm -f .oclif.manifest.json",
     "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
     "prepublishOnly": "rm -rf lib && tsc && oclif-dev manifest",
-    "test": "nyc mocha --forbid-only --timeout 10000 \"test/**/*.test.ts\"",
+    "test": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md"
   }
 }

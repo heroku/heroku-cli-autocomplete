@@ -1,8 +1,20 @@
 import {expect, test} from '@oclif/test'
+const nock = require('nock')
+
+const setupMock = () => nock('https://api.heroku.com', {
+  reqheaders: {
+    'user-agent': (v: any) => !!v ,
+    accept: 'application/vnd.heroku+json; version=3',
+    authorization: (v: any) => !!v
+  }
+})
+.get('/apps')
+.reply(200, [{name: 'foo'}, {name: 'bar'}])
 
 describe('autocomplete index', () => {
   test
   .stdout()
+  .add('api', () => setupMock())
   .command(['autocomplete', 'bash'])
   .it('provides bash instructions', ctx => {
     expect(ctx.stdout).to.contain(`
@@ -24,10 +36,12 @@ Enjoy!
 
 `
     )
+    ctx.api.done()
   })
 
   test
   .stdout()
+  .add('api', () => setupMock())
   .command(['autocomplete', 'zsh'])
   .it('provides zsh instructions', ctx => {
     expect(ctx.stdout).to.contain(`
@@ -49,5 +63,6 @@ Enjoy!
 
 `
     )
+    ctx.api.done()
   })
 })
