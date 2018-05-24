@@ -21,7 +21,7 @@ export const completions: Hook<any> = async function ({type, app}: {type?: 'app'
   const update = async (completion: any, cacheKey: string) => {
     const cacheKeyPath = path.join(cachePath, cacheKey)
     const options = await completion.options({config: this.config})
-    updateCache(cacheKeyPath, options)
+    await updateCache(cacheKeyPath, options)
   }
 
   cli.action.start('Updating completions')

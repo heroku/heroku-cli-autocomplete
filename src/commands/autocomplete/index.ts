@@ -74,6 +74,6 @@ Enjoy!
   async updateCache(completion: any, cacheKey: string) {
     const cachePath = path.join(this.completionsCacheDir, cacheKey)
     const options = await completion.options({config: this.config})
-    updateCache(cachePath, options)
+    await updateCache(cachePath, options)
   }
 }
