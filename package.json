@@ -61,7 +61,7 @@
     "postpublish": "rm -f .oclif.manifest.json",
     "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
     "prepublishOnly": "rm -rf lib && tsc && oclif-dev manifest",
-    "test": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
+    "test": "nyc mocha --forbid-only --timeout 10000 \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md"
   }
 }
