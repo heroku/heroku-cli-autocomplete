@@ -9,9 +9,9 @@ import acCreate from '../commands/autocomplete/create'
 
 export const completions: Hook<any> = async function ({type, app}: {type?: 'app' | 'addon' | 'config' | 'login' | 'logout', app?: string}) {
   const logInOut = type === 'login' || type === 'logout'
-  const cachePath = path.join(this.config.cacheDir, 'autocomplete', 'completions')
-  const rm = () => fs.emptyDir(cachePath)
-  const rmKey = (cacheKey: string) => fs.remove(path.join(cachePath, cacheKey))
+  const completionsDir = path.join(this.config.cacheDir, 'autocomplete', 'completions')
+  const rm = () => fs.emptyDir(completionsDir)
+  const rmKey = (cacheKey: string) => fs.remove(path.join(completionsDir, cacheKey))
 
   if (type === 'app') return rmKey('app')
   if (type === 'addon' && app) return rmKey(`${app}_addons`)
@@ -19,9 +19,9 @@ export const completions: Hook<any> = async function ({type, app}: {type?: 'app'
   if (logInOut) return rm()
 
   const update = async (completion: any, cacheKey: string) => {
-    const cacheKeyPath = path.join(cachePath, cacheKey)
+    const cachePath = path.join(completionsDir, cacheKey)
     const options = await completion.options({config: this.config})
-    await updateCache(cacheKeyPath, options)
+    await updateCache(cachePath, options)
   }
 
   cli.action.start('Updating completions')
