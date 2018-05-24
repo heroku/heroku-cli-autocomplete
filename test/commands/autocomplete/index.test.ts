@@ -1,20 +1,23 @@
 import {expect, test} from '@oclif/test'
 const nock = require('nock')
 
-const setupMock = () => nock('https://api.heroku.com', {
+const setupMock = (resource: string) => nock('https://api.heroku.com', {
   reqheaders: {
     'user-agent': (v: any) => !!v ,
     accept: 'application/vnd.heroku+json; version=3',
     authorization: (v: any) => !!v
   }
 })
-.get('/apps')
+.get(`/${resource}`)
 .reply(200, [{name: 'foo'}, {name: 'bar'}])
 
 describe('autocomplete index', () => {
   test
   .stdout()
-  .add('api', () => setupMock())
+  .add('apps', () => setupMock('apps'))
+  .add('pipelines', () => setupMock('pipelines'))
+  .add('spaces', () => setupMock('spaces'))
+  .add('teams', () => setupMock('teams'))
   .command(['autocomplete', 'bash'])
   .it('provides bash instructions', ctx => {
     expect(ctx.stdout).to.contain(`
@@ -36,12 +39,18 @@ Enjoy!
 
 `
     )
-    ctx.api.done()
+    ctx.apps.done()
+    ctx.pipelines.done()
+    ctx.spaces.done()
+    ctx.teams.done()
   })
 
   test
   .stdout()
-  .add('api', () => setupMock())
+  .add('apps', () => setupMock('apps'))
+  .add('pipelines', () => setupMock('pipelines'))
+  .add('spaces', () => setupMock('spaces'))
+  .add('teams', () => setupMock('teams'))
   .command(['autocomplete', 'zsh'])
   .it('provides zsh instructions', ctx => {
     expect(ctx.stdout).to.contain(`
@@ -63,6 +72,9 @@ Enjoy!
 
 `
     )
-    ctx.api.done()
+    ctx.apps.done()
+    ctx.pipelines.done()
+    ctx.spaces.done()
+    ctx.teams.done()
   })
 })
