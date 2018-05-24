@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@fancy-test/nock@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@fancy-test/nock/-/nock-0.1.1.tgz#0d9669d293f6a53dc1814b0c4ad1e8cae57c7046"
+
 "@fimbul/bifrost@^0.6.0":
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/@fimbul/bifrost/-/bifrost-0.6.0.tgz#5150302b63e1bd37ff95f561c3605949cb7e3770"
@@ -141,6 +145,12 @@
 "@types/mocha@5":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.0.tgz#b3c8e69f038835db1a7fdc0b3d879fc50506e29e"
+
+"@types/nock@^9.1.3":
+  version "9.1.3"
+  resolved "https://registry.yarnpkg.com/@types/nock/-/nock-9.1.3.tgz#1d445679375b9e25afd449dc56585f81729454e8"
+  dependencies:
+    "@types/node" "*"
 
 "@types/node@*":
   version "10.0.3"

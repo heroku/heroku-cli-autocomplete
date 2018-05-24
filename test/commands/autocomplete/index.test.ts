@@ -1,23 +1,33 @@
-import {expect, test} from '@oclif/test'
-const nock = require('nock')
+import Nock from '@fancy-test/nock'
+import * as Test from '@oclif/test'
 
-const setupMock = (resource: string) => nock('https://api.heroku.com', {
-  reqheaders: {
-    'user-agent': (v: any) => !!v ,
-    accept: 'application/vnd.heroku+json; version=3',
-    authorization: (v: any) => !!v
-  }
-})
-.get(`/${resource}`)
-.reply(200, [{name: 'foo'}, {name: 'bar'}])
+const test = Test.test
+.register('nock', Nock)
+const expect = Test.expect
 
 describe('autocomplete index', () => {
   test
   .stdout()
-  .add('apps', () => setupMock('apps'))
-  .add('pipelines', () => setupMock('pipelines'))
-  .add('spaces', () => setupMock('spaces'))
-  .add('teams', () => setupMock('teams'))
+  .nock('https://api.heroku.com', (nock: any) => {
+    nock
+    .get('/apps')
+    .reply(200, [{name: 'foo'}, {name: 'bar'}])
+  })
+  .nock('https://api.heroku.com', (nock: any) => {
+    nock
+    .get('/pipelines')
+    .reply(200, [{name: 'foo'}, {name: 'bar'}])
+  })
+  .nock('https://api.heroku.com', (nock: any) => {
+    nock
+    .get('/spaces')
+    .reply(200, [{name: 'foo'}, {name: 'bar'}])
+  })
+  .nock('https://api.heroku.com', (nock: any) => {
+    nock
+    .get('/teams')
+    .reply(200, [{name: 'foo'}, {name: 'bar'}])
+  })
   .command(['autocomplete', 'bash'])
   .it('provides bash instructions', ctx => {
     expect(ctx.stdout).to.contain(`
@@ -39,18 +49,30 @@ Enjoy!
 
 `
     )
-    ctx.apps.done()
-    ctx.pipelines.done()
-    ctx.spaces.done()
-    ctx.teams.done()
   })
 
   test
   .stdout()
-  .add('apps', () => setupMock('apps'))
-  .add('pipelines', () => setupMock('pipelines'))
-  .add('spaces', () => setupMock('spaces'))
-  .add('teams', () => setupMock('teams'))
+  .nock('https://api.heroku.com', (nock: any) => {
+    nock
+    .get('/apps')
+    .reply(200, [{name: 'foo'}, {name: 'bar'}])
+  })
+  .nock('https://api.heroku.com', (nock: any) => {
+    nock
+    .get('/pipelines')
+    .reply(200, [{name: 'foo'}, {name: 'bar'}])
+  })
+  .nock('https://api.heroku.com', (nock: any) => {
+    nock
+    .get('/spaces')
+    .reply(200, [{name: 'foo'}, {name: 'bar'}])
+  })
+  .nock('https://api.heroku.com', (nock: any) => {
+    nock
+    .get('/teams')
+    .reply(200, [{name: 'foo'}, {name: 'bar'}])
+  })
   .command(['autocomplete', 'zsh'])
   .it('provides zsh instructions', ctx => {
     expect(ctx.stdout).to.contain(`
@@ -72,9 +94,5 @@ Enjoy!
 
 `
     )
-    ctx.apps.done()
-    ctx.pipelines.done()
-    ctx.spaces.done()
-    ctx.teams.done()
   })
 })
