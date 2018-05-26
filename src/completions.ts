@@ -59,12 +59,12 @@ const ConfigSetCompletion: flags.ICompletion = {
 export const AppCompletion: flags.ICompletion = {
   cacheDuration: oneDay,
   options: async ctx => {
-    const personalApps = await herokuGet('/users/~/apps', ctx)
-    const teams = await herokuGet('/teams', ctx)
-    const teamApps: string[] = flatten(await Promise.all(teams.map((team: string) => {
-      return herokuGet(`/apps?team=${team}`, ctx)
-    })))
-    return personalApps.concat(teamApps)
+    const personalApps = await herokuGet('users/~/apps', ctx)
+    // const teams = await herokuGet('teams', ctx)
+    // const teamApps: string[] = flatten(await Promise.all(teams.map((team: string) => {
+    //   return herokuGet(`/teams/${team}/apps}`, ctx)
+    // })))
+    return personalApps//.concat(teamApps)
   },
 }
 

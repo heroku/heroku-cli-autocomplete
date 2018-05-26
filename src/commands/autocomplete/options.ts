@@ -75,7 +75,7 @@ export default class Options extends AutocompleteBase {
         let {name, flag} = this.findFlagFromWildArg(argvFlag, Klass)
         if (!flag) this.throwError(`${argvFlag} is not a valid flag for ${id}`)
         cacheKey = name || flag.name
-        cacheCompletion = flag.completion
+        // cacheCompletion = flag.completion
       } else {
         const cmdArgs = Klass.args || []
         // variable arg (strict: false)
