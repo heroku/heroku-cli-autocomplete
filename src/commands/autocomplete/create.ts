@@ -166,8 +166,6 @@ export default class Create extends AutocompleteBase {
       .join('\n')
 
     if (flagscompletions) {
-      // tslint:disable-next-line:no-console
-      console.log(typeof Command)
       return `_set_${id.replace(/:/g, '_')}_flags () {
 _flags=(
 ${flagscompletions}
