@@ -2,6 +2,7 @@ import {APIClient, flags} from '@heroku-cli/command'
 import {deps} from '@heroku-cli/command/lib/deps'
 import {configRemote, getGitRemotes} from '@heroku-cli/command/lib/git'
 import * as Config from '@oclif/config'
+import flatten = require('lodash.flatten')
 import * as path from 'path'
 
 export const oneDay = 60 * 60 * 24
@@ -58,8 +59,12 @@ const ConfigSetCompletion: flags.ICompletion = {
 export const AppCompletion: flags.ICompletion = {
   cacheDuration: oneDay,
   options: async ctx => {
-    let apps = await herokuGet('apps', ctx)
-    return apps
+    const personalApps = await herokuGet('/users/~/apps', ctx)
+    const teams = await herokuGet('/teams', ctx)
+    const teamApps: string[] = flatten(await Promise.all(teams.map((team: string) => {
+      return herokuGet(`/apps?team=${team}`, ctx)
+    })))
+    return personalApps.concat(teamApps)
   },
 }
 
