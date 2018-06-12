@@ -26,45 +26,15 @@ export const CompletionVariableArgsLookup: { [key: string]: string } = {
   'config:set': 'configSet',
 }
 
-const ConfigCompletion: flags.ICompletion = {
-  cacheDuration: 60 * 60 * 24 * 7,
-  cacheKey: async (ctx: any) => {
-    return ctx.flags && ctx.flags.app ? `${ctx.flags.app}_config_vars` : ''
-  },
-  options: async (ctx: any) => {
-    const heroku = new APIClient(ctx.config)
-    if (ctx.flags && ctx.flags.app) {
-      let {body: configs} = await heroku.get(`/apps/${ctx.flags.app}/config-vars`)
-      return Object.keys(configs)
-    }
-    return []
-  },
-}
-
-const ConfigSetCompletion: flags.ICompletion = {
-  cacheDuration: 60 * 60 * 24 * 7,
-  cacheKey: async (ctx: any) => {
-    return ctx.flags && ctx.flags.app ? `${ctx.flags.app}_config_set_vars` : ''
-  },
-  options: async (ctx: any) => {
-    const heroku = new APIClient(ctx.config)
-    if (ctx.flags && ctx.flags.app) {
-      let {body: configs} = await heroku.get(`/apps/${ctx.flags.app}/config-vars`)
-      return Object.keys(configs).map(k => `${k}=`)
-    }
-    return []
-  },
-}
-
 export const AppCompletion: flags.ICompletion = {
   cacheDuration: oneDay,
   options: async ctx => {
-    const personalApps = await herokuGet('users/~/apps', ctx)
-    // const teams = await herokuGet('teams', ctx)
-    // const teamApps: string[] = flatten(await Promise.all(teams.map((team: string) => {
-    //   return herokuGet(`/teams/${team}/apps}`, ctx)
-    // })))
-    return personalApps//.concat(teamApps)
+    const teams = await herokuGet('teams', ctx)
+    let apps = {
+      personal: await herokuGet('users/~/apps', ctx),
+      teams: flatten(await Promise.all(teams.map((team: string) => herokuGet(`teams/${team}/apps`, ctx)))),
+    }
+    return apps.personal.concat(apps.teams)
   },
 }
 
@@ -105,6 +75,36 @@ export const BuildpackCompletion: flags.ICompletion = {
       'heroku/php',
       'heroku/go',
     ]
+  },
+}
+
+const ConfigCompletion: flags.ICompletion = {
+  cacheDuration: 60 * 60 * 24 * 7,
+  cacheKey: async (ctx: any) => {
+    return ctx.flags && ctx.flags.app ? `${ctx.flags.app}_config_vars` : ''
+  },
+  options: async (ctx: any) => {
+    const heroku = new APIClient(ctx.config)
+    if (ctx.flags && ctx.flags.app) {
+      let {body: configs} = await heroku.get(`/apps/${ctx.flags.app}/config-vars`)
+      return Object.keys(configs)
+    }
+    return []
+  },
+}
+
+const ConfigSetCompletion: flags.ICompletion = {
+  cacheDuration: 60 * 60 * 24 * 7,
+  cacheKey: async (ctx: any) => {
+    return ctx.flags && ctx.flags.app ? `${ctx.flags.app}_config_set_vars` : ''
+  },
+  options: async (ctx: any) => {
+    const heroku = new APIClient(ctx.config)
+    if (ctx.flags && ctx.flags.app) {
+      let {body: configs} = await heroku.get(`/apps/${ctx.flags.app}/config-vars`)
+      return Object.keys(configs).map(k => `${k}=`)
+    }
+    return []
   },
 }
 

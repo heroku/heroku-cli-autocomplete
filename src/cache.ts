@@ -15,10 +15,6 @@ function _mtime(f: any) {
 }
 
 export async function fetchCache(cachePath: string, cacheDuration: number, options: any): Promise<Array<string>> {
-  if (process.env.HEROKU_SUDO === '1') {
-    return options.cacheFn()
-  }
-
   let cachePresent = fs.existsSync(cachePath)
   if (cachePresent && !_isStale(cachePath, cacheDuration)) {
     return fs.readJSON(cachePath)
