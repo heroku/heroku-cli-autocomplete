@@ -34,19 +34,19 @@ export abstract class AutocompleteBase extends Command {
     return path.join(this.config.cacheDir, 'autocomplete')
   }
 
-  public get acLogfilePath(): string {
+  public get completionsCacheDir(): string {
+    return path.join(this.config.cacheDir, 'autocomplete', 'completions')
+  }
+
+  public get acLogfile(): string {
     return path.join(this.config.cacheDir, 'autocomplete.log')
   }
 
   writeLogFile(msg: string) {
     let entry = `[${moment().format()}] ${msg}\n`
-    let fd = fs.openSync(this.acLogfilePath, 'a')
+    let fd = fs.openSync(this.acLogfile, 'a')
     // @ts-ignore
     fs.write(fd, entry)
-  }
-
-  public get completionsCacheDir(): string {
-    return path.join(this.config.cacheDir, 'autocomplete', 'completions')
   }
 
   protected findCompletion(name: string, id: string): flags.ICompletion | undefined {

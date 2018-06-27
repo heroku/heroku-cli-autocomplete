@@ -15,14 +15,13 @@ export default class Index extends AutocompleteBase {
   static args = [{name: 'shell', description: 'shell type', required: false}]
 
   static flags = {
-    'refresh-cache': flags.boolean({description: 'refresh cache only (ignores displaying instructions)', char: 'r'}),
+    'skip-instructions': flags.boolean({description: 'don\'t show installation instructions', char: 's'}),
   }
 
   static examples = [
     '$ heroku autocomplete',
     '$ heroku autocomplete bash',
-    '$ heroku autocomplete zsh',
-    '$ heroku autocomplete --refresh-cache'
+    '$ heroku autocomplete zsh'
   ]
 
   async run() {
@@ -38,7 +37,7 @@ export default class Index extends AutocompleteBase {
     await this.updateCache(TeamCompletion, 'team')
     cli.action.stop()
 
-    if (!flags['refresh-cache']) {
+    if (!flags['skip-instructions']) {
       const bin = this.config.bin
       const bashNote = 'If your terminal starts as a login shell you may need to print the init script into ~/.bash_profile or ~/.profile.'
       const zshNote = `After sourcing, you can run \`${chalk.cyan('$ compaudit -D')}\` to ensure no permissions conflicts are present`
