@@ -67,7 +67,7 @@ export default class Doctor extends AutocompleteBase {
         ]
       })
 
-    if (flags) this.printList()
+    if (flags.verbose) this.printList()
   }
 
   private printList() {
