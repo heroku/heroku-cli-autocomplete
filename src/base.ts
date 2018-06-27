@@ -6,14 +6,6 @@ import * as path from 'path'
 import {CompletionAliases, CompletionBlacklist, CompletionMapping, CompletionVariableArgsLookup} from './completions'
 
 export abstract class AutocompleteBase extends Command {
-  public get cliBin() {
-    return this.config.bin
-  }
-
-  public get cliBinEnvVar() {
-    return this.config.bin.toUpperCase().replace('-', '_')
-  }
-
   public errorIfWindows() {
     if (this.config.windows) {
       throw new Error('Autocomplete is not currently supported in Windows')
@@ -34,6 +26,10 @@ export abstract class AutocompleteBase extends Command {
     return path.join(this.config.cacheDir, 'autocomplete')
   }
 
+  public get completionsCacheDir(): string {
+    return path.join(this.config.cacheDir, 'autocomplete', 'completions')
+  }
+
   public get acLogfilePath(): string {
     return path.join(this.config.cacheDir, 'autocomplete.log')
   }
@@ -43,10 +39,6 @@ export abstract class AutocompleteBase extends Command {
     let fd = fs.openSync(this.acLogfilePath, 'a')
     // @ts-ignore
     fs.write(fd, entry)
-  }
-
-  public get completionsCacheDir(): string {
-    return path.join(this.config.cacheDir, 'autocomplete', 'completions')
   }
 
   protected findCompletion(name: string, id: string): flags.ICompletion | undefined {
