@@ -6,6 +6,14 @@ import * as path from 'path'
 import {CompletionAliases, CompletionBlacklist, CompletionMapping, CompletionVariableArgsLookup} from './completions'
 
 export abstract class AutocompleteBase extends Command {
+  public get cliBin() {
+    return this.config.bin
+  }
+
+  public get cliBinEnvVar() {
+    return this.config.bin.toUpperCase().replace('-', '_')
+  }
+
   public errorIfWindows() {
     if (this.config.windows) {
       throw new Error('Autocomplete is not currently supported in Windows')
@@ -13,8 +21,12 @@ export abstract class AutocompleteBase extends Command {
   }
 
   public errorIfNotSupportedShell(shell: string) {
+    if (!shell) {
+      this.error('Missing required argument shell')
+    }
+    this.errorIfWindows()
     if (!['bash', 'zsh'].includes(shell)) {
-      throw new Error(`Currently ${shell} is not a supported shell for autocomplete`)
+      throw new Error(`${shell} is not a supported shell for autocomplete`)
     }
   }
 
@@ -22,19 +34,19 @@ export abstract class AutocompleteBase extends Command {
     return path.join(this.config.cacheDir, 'autocomplete')
   }
 
-  public get completionsCacheDir(): string {
-    return path.join(this.config.cacheDir, 'autocomplete', 'completions')
-  }
-
-  public get acLogfile(): string {
+  public get acLogfilePath(): string {
     return path.join(this.config.cacheDir, 'autocomplete.log')
   }
 
   writeLogFile(msg: string) {
     let entry = `[${moment().format()}] ${msg}\n`
-    let fd = fs.openSync(this.acLogfile, 'a')
+    let fd = fs.openSync(this.acLogfilePath, 'a')
     // @ts-ignore
     fs.write(fd, entry)
+  }
+
+  public get completionsCacheDir(): string {
+    return path.join(this.config.cacheDir, 'autocomplete', 'completions')
   }
 
   protected findCompletion(name: string, id: string): flags.ICompletion | undefined {
