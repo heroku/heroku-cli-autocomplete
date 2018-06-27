@@ -30,13 +30,13 @@ export abstract class AutocompleteBase extends Command {
     return path.join(this.config.cacheDir, 'autocomplete', 'completions')
   }
 
-  public get acLogfile(): string {
+  public get acLogfilePath(): string {
     return path.join(this.config.cacheDir, 'autocomplete.log')
   }
 
   writeLogFile(msg: string) {
     let entry = `[${moment().format()}] ${msg}\n`
-    let fd = fs.openSync(this.acLogfile, 'a')
+    let fd = fs.openSync(this.acLogfilePath, 'a')
     // @ts-ignore
     fs.write(fd, entry)
   }
