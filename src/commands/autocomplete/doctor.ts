@@ -29,15 +29,15 @@ export default class Doctor extends AutocompleteBase {
     const pjson = require(path.resolve(__dirname, '..', '..', '..', 'package.json'))
     data.push({name: 'plugin version', value: pjson.version})
 
-    // check shell shim
-    // ex: HEROKU_AC_ZSH_SETUP_PATH
+    // check shell shim source env var
+    // i.e. HEROKU_AC_<shell>_SETUP_PATH
     const shellProfilePath = path.join(process.env.HOME || '', shell === 'zsh' ? '.zshrc' : '.bashrc')
     const shellProfile = fs.readFileSync(shellProfilePath)
     const regex = /AC_\w+_SETUP_PATH/
     const shimVlaue = regex.exec(shellProfile.toString()) ? 'present' : 'missing'
     data.push({name: `~/${shell === 'zsh' ? '.zshrc' : '.bashrc'} shimmed`, value: shimVlaue})
 
-    // check shell cache build
+    // check shell shim
     const shellCompletion = path.join(this.autocompleteCacheDir, `${shell}_setup`)
     const shellCompletionValue = fs.existsSync(shellCompletion) ? 'present' : 'missing'
     data.push({name: `${shell} shim file`, value: shellCompletionValue})
@@ -47,8 +47,7 @@ export default class Doctor extends AutocompleteBase {
     const shellCmdCacheValue = fs.existsSync(shellCmdCache) ? 'present' : 'missing'
     data.push({name: `${shell} commands cache`, value: shellCmdCacheValue})
 
-    // apps cached
-
+    // check app completion cache
     const appsCache = path.join(this.completionsCacheDir, 'app')
     let appsCacheValue
     if (fs.existsSync(appsCache)) {
