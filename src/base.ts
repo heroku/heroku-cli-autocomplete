@@ -6,14 +6,6 @@ import * as path from 'path'
 import {CompletionAliases, CompletionBlacklist, CompletionMapping, CompletionVariableArgsLookup} from './completions'
 
 export abstract class AutocompleteBase extends Command {
-  public get cliBin() {
-    return this.config.bin
-  }
-
-  public get cliBinEnvVar() {
-    return this.config.bin.toUpperCase().replace('-', '_')
-  }
-
   public errorIfWindows() {
     if (this.config.windows) {
       throw new Error('Autocomplete is not currently supported in Windows')
